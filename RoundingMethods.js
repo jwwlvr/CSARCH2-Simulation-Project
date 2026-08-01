@@ -106,9 +106,43 @@ class RoundingMethod {
     }
 
     static rndToNearest(integerPart, fractionPart, targetDigits, sign){
-        //value = integerPart.concat(".", fractionPart)
-        //const cutLength = targetDigits + (value.includes(".") ? 1 : 0);
-        //let lastDiscarded = value[cutLength + 1] //gets last discarded bit
+        let value = integerPart.concat(".", fractionPart)
+        const cutLength = targetDigits + (value.includes(".") ? 1 : 0);
+        let lastDiscarded = value[cutLength] //gets last discarded bit
+        value = value.slice(0,cutLength)
+        
+        if(lastDiscarded == "5"){
+            //ties to even logic
+
+            let pntIndex = value.indexOf(".");
+            let intPart = value.slice(0,pntIndex)
+            let fracPart = value.slice(pntIndex+1)
+            let fracPartNum = Number(fracPart)
+
+            if(fracPartNum % 2 === 0){
+                value = value.slice(0,cutLength)
+            }else{
+                fracPartNum += 1
+                value = intPart.concat(".", fracPartNum)
+            }
+
+            return sign + value
+
+        }else if(lastDiscarded < "5"){
+            if(sign == "-"){
+                return RoundingMethod.rndUp(integerPart, fractionPart, targetDigits, sign)
+            }
+            else{
+                return RoundingMethod.rndDown(integerPart, fractionPart, targetDigits, sign)
+            }
+            
+        }else{
+
+            if(sign == "-"){
+                return RoundingMethod.rndDown(integerPart, fractionPart, targetDigits, sign)
+            }
+            return RoundingMethod.rndUp(integerPart, fractionPart, targetDigits, sign)
+        }
 
     }
 
@@ -132,4 +166,8 @@ console.log(
 
 console.log(
     RoundingMethod.rndDown("1", "55", 2, "")
+);
+
+console.log(
+    RoundingMethod.rndToNearest("1", "52", 2, "-")
 );
