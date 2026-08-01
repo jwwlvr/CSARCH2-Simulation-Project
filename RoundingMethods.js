@@ -24,7 +24,7 @@ class RoundingMethod {
             input = input.slice(1) //remove negative sign for now
         }
 
-         const pointIndex = input.indexOf(".");
+        const pointIndex = input.indexOf(".");
 
          if (pointIndex === -1){
             //whole numbers 
@@ -51,24 +51,85 @@ class RoundingMethod {
         return sign + value;
     }
 
-    static rndUp(value, targetNum, type) {
+    static rndUp(integerPart, fractionPart, targetDigits, sign) {
         // towards +positive infinity
+        
+        //ex -10.1281
+        // truncate 4 = 10.12
+        let value = integerPart.concat(".", fractionPart)
+        const cutLength = targetDigits + (value.includes(".") ? 1 : 0);
+        value = value.slice(0,cutLength)
 
+        //let lastDiscarded = value[cutLength + 1] //gets last discarded bit
 
+        if (sign == "-"){
+            value = value.slice(0,cutLength)
+        }else{
+            let pntIndex = value.indexOf(".");
+            let intPart = value.slice(0,pntIndex)
+            let fracPart = value.slice(pntIndex+1)
 
+            let fracPartUp = Number(fracPart)
+            fracPartUp += 1
+            value = intPart.concat(".", fracPartUp)
+            
+        }
+
+        return sign + value
 
     }
 
-    static rndDown(value, targetNum, type){
+    static rndDown(integerPart, fractionPart, targetDigits, sign){
         // towards -negative infinity
+
+        let value = integerPart.concat(".", fractionPart)
+        const cutLength = targetDigits + (value.includes(".") ? 1 : 0);
+        value = value.slice(0,cutLength)
+
+        //let lastDiscarded = value[cutLength + 1] //gets last discarded bit
+
+        if (sign == "-"){
+            let pntIndex = value.indexOf(".");
+            let intPart = value.slice(0,pntIndex)
+            let fracPart = value.slice(pntIndex+1)
+
+            let fracPartUp = Number(fracPart)
+            fracPartUp += 1
+            value = intPart.concat(".", fracPartUp)
+        }else{
+            value = value.slice(0,cutLength)
+            
+            
+        }
+
+        return sign + value
     }
 
-    static rndToNearest(value, targetNum, type){
+    static rndToNearest(integerPart, fractionPart, targetDigits, sign){
+        //value = integerPart.concat(".", fractionPart)
+        //const cutLength = targetDigits + (value.includes(".") ? 1 : 0);
+        //let lastDiscarded = value[cutLength + 1] //gets last discarded bit
 
     }
 
 }
 
+/*
+Sample Output:
+
+Number  |   Truncate    |   RndUp   |   RndDown |
+ 1.55         1.5            1.6         1.5
+-1.55        -1.5           -1.5        -1.6
+
+*/ 
 console.log(
-    RoundingMethod.truncate("10", "121212", 4, "")
+    RoundingMethod.truncate("1", "55", 2, "")
+);
+
+console.log(
+    RoundingMethod.rndUp("1", "55", 2, "")
+);
+
+console.log(
+    RoundingMethod.rndDown("1", "55", 2, "")
 );
