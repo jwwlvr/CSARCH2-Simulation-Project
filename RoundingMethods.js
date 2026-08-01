@@ -8,15 +8,10 @@ class RoundingMethod {
     Input 2: target # of digits
     Output: round using all methods
 */
-
-    //check if dec or bin and then direct to apppropriate functions
-    //decide whether to use static or function
     static roundAll(input, targetDigits) {
 
         //check if dec or bin
         //extract sign, main digit, and remainder
-
-        //ex 12.15
 
         let sign = ""
         if (input[0] == "-"){
