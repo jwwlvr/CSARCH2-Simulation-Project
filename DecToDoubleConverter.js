@@ -17,23 +17,23 @@ class DecToDoubleConverter {
             string = string.slice(1);
         }
 
-        // check for special cases
+        // check for special cases (string)
         let lowerString = string.toLowerCase();
-        // +0
-        if (lowerString === "0" || lowerString === "+0") {
-            return this.pack("0", "00000000000", "0".repeat(52), ["Special case: +0"]);
-        }
         // -0
         if (lowerString === "-0") {
             return this.pack("1", "00000000000", "0".repeat(52), ["Special case: -0"]);
         }
-        // + infinity
-        if (lowerString === "infinity" || lowerString === "inf" || lowerString === "+infinity" || lowerString === "+inf") {
-            return this.pack("0", "11111111111", "0".repeat(52), ["Special case: +Infinity"]);
+        // +0
+        if (lowerString === "0" || lowerString === "+0") {
+            return this.pack("0", "00000000000", "0".repeat(52), ["Special case: +0"]);
         }
         // - infinity
         if (lowerString === "-infinity" || lowerString === "-inf") {
             return this.pack("1", "11111111111", "0".repeat(52), ["Special case: -Infinity"]);
+        }
+        // + infinity
+        if (lowerString === "infinity" || lowerString === "inf" || lowerString === "+infinity" || lowerString === "+inf") {
+            return this.pack("0", "11111111111", "0".repeat(52), ["Special case: +Infinity"]);
         }
         // sNaN
         if (lowerString === "snan") {
@@ -45,8 +45,6 @@ class DecToDoubleConverter {
             let mantissa = "1" + "0".repeat(51);
             return this.pack("0", "11111111111", mantissa, ["Special Case: Quiet NaN"]);
         }
-
-        // check if valid dec number
 
         // separate int and fraction
         let parts = string.split(".");
@@ -113,14 +111,125 @@ class DecToDoubleConverter {
 
         text.push(`Normalized Binary: ${exponent}`);
 
-        // handle exponent and mantissa
-        // extract mantissa bits (52 bits)
-        // extract GRS
-        // biased exp
-        // pack func
-        // test cases
+        // if overflow
+        if (exponent > 1023) {
+            text.push("Exponent overflow")
+            return this.pack(sign, "11111111111", "0".repeat(52), text);
+        }
+
+        // denormalized
+        let isDenormalized = false;
+        if (exponent < -1022) {
+            isDenormalized = true;
+        }
+        let bitOffset = isDenormalized ? (exponent + 1022) : 0; // if denormalized, shift bits to right
         
+        // helper to get bits
+        let getBits = (index) => {
+            let position = bitOffset + index;
+            // if out of bounds, return 0
+            if (position < 0 || position >= wholeBits.length) {
+                return "0";
+            }
+            return wholeBits[position]; 
+        };
+
+        // get mantissa bits (52 bits)
+        let mantissa = "";
+        for (let i = 1; i <= 52; i++) {
+            mantissa += getBits(i);
+        }
+
+        // get GRS
+        let guardBit = getBits(53);
+        let roundBit = getBits(54);
+        let stickyBit = "0";
+
+        for (let i = bitOffset + 55; i < wholeBits.length; i++) {
+            // if ANY bit after round bit is 1, S is 1
+            if (wholeBits[i] === "1") {
+                stickyBit = "1";
+                break;
+            }
+        }
+        // if not exact frac, S is automatically 1
+        if (!exactFraction) {
+            stickyBit = "1";
+        }
+
+        text.push(`Mantissa: ${mantissa}`);
+        text.push(`Guard Bit: ${guardBit}`);
+        text.push(`Round Bit: ${roundBit}`);
+        text.push(`Sticky Bit: ${stickyBit}`);
+
+        let mantissaInt = BigInt("0b" + mantissa);
+        let rndUp = false;
+        if ((guardBit === "1") && (roundBit === "1" || stickyBit === "1" || (mantissaInt & 1n) === 1n)) {
+            rndUp = true;
+        }
+        let carry = 0n;
+
+        if (rndUp) {
+            text.push("Rounding up");
+            mantissaInt += 1n;
+
+            // overflow check
+            if (mantissaInt >= (1n << 52n)) {
+                carry = 1n;
+                mantissaInt = 0n; // reset mantissa to 0
+            }
+        } else {
+            text.push("No rounding needed");
+        }
+
+        // biased exp
+        let biasedExp = 0n;
+        if (isDenormalized) {
+            biasedExp = carry; // exp is 0 for denormalized, but if w carry, 1
+        } else {
+            biasedExp = BigInt(exponent + 1023) + carry;
+        }
+
+        // check for overflow after rounding
+        if (biasedExp >= 2047n) {
+            text.push("Exponent overflow");
+            return this.pack(sign, "11111111111", "0".repeat(52), text);
+        }
+
+        let expBits = biasedExp.toString(2).padStart(11, "0");// ensure 11 bits
+        let finalMantissa = mantissaInt.toString(2).padStart(52, "0"); // ensure 52 bits
+
+        return this.pack(sign, expBits, finalMantissa, text);
 
     }
 
+    // helper to pack ino obj
+    static pack(sign, expBits, mantissaBits, text = []) {
+            let bits64 = sign + expBits + mantissaBits;
+            let binaryString = `${sign} ${expBits} ${mantissaBits}`;
+
+            let hexString = "";
+            for (let i = 0; i < 64; i += 4) {
+                // take 4 bits at a time
+                let nibble = bits64.slice(i, i + 4);
+                hexString += parseInt(nibble, 2).toString(16).toUpperCase();
+            }
+
+            return {
+                sign: sign === "1" ? "-" : "+",
+                text: text,
+                binary: binaryString,
+                hex: hexString
+            }
+        }
 }
+
+// Test Cases
+console.log("3.25");
+console.log(DecToDoubleConverter.convert("3.25"));
+
+console.log("-0.1");
+console.log(DecToDoubleConverter.convert("-0.1"));
+
+console.log("snan");
+console.log(DecToDoubleConverter.convert("snan"));
