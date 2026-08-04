@@ -82,6 +82,68 @@
   <img src="screenshots/cvt1.2.jpg" width="49%" />
 </p>
 
+<p align="center">
+  <img src="screenshots/cvt1.3.jpg" width="49%" />
+  <img src="screenshots/cvt1.4.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/cvt1.5.jpg" width="49%" />
+  <img src="screenshots/cvt1.6.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/cvt1.7.jpg" width="49%" />
+  <img src="screenshots/cvt1.8.jpg" width="49%" />
+</p>
+
+**Rounding Methods:**
+<p align="center">
+  <img src="screenshots/rnd1.1.jpg" width="49%" />
+  <img src="screenshots/rnd1.2.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/rnd1.3.jpg" width="49%" />
+  <img src="screenshots/rnd1.4.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/rnd1.5.jpg" width="49%" />
+  <img src="screenshots/rnd1.6.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/rnd1.7.jpg" width="49%" />
+  <img src="screenshots/rnd1.8.jpg" width="49%" />
+</p>
+
+**Arithmetic Operations(GRS Method):**
+<p align="center">
+  <img src="screenshots/art1.1.jpg" width="49%" />
+  <img src="screenshots/art1.2.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/art1.3.jpg" width="49%" />
+  <img src="screenshots/art1.4.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/art1.5.jpg" width="49%" />
+  <img src="screenshots/art1.6.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/art1.7.jpg" width="49%" />
+  <img src="screenshots/art1.8.jpg" width="49%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/art1.9.jpg" width="49%" />
+</p>
+
+
 ---
 
 ## Deployment
