@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rounding Methods | Machine 3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="Rounding.css">
+</head>
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <nav style="background: var(--bg); border-bottom: 1px solid var(--line);">
+    <div class="brand">
+      <div class="logo-dot"><i></i><i></i></div>
+      <div class="brand-name"><a href="index.html">Machine 3</a> <span>IEEE 754 · double precision</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="dectodouble.html">Converter</a>
+      <a href="rounding.html">Rounding</a>
+    </div>
+    <div class="team-menu" id="teamMenu">
+      <button class="nav-cta" id="teamBtn" aria-expanded="false">Team</button>
+      <div class="team-dropdown" id="teamDropdown">
+        <div class="team-dropdown-title">Section S04</div>
+        <ul>
+          <li>Austria, Ma. Alexandria</li>
+          <li>Campos, Don Oswin</li>
+          <li>Encallado, Edlynn Rei</li>
+          <li>Gildore, Andrei Miguel</li>
+          <li>Patricio, Anne Beatriz</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN ROUNDING WORKSPACE -->
+  <main style="max-width: 900px; margin: 40px auto; padding: 0 20px 80px;">
+    
+    <div class="card c2" style="cursor: default; transform: none; box-shadow: var(--shadow); padding: 36px;">
+      
+      <!-- Card Header / Title Icon Block -->
+      <div style="display: flex; align-items: flex-start; gap: 18px; margin-bottom: 28px;">
+        <div class="icon" style="margin-bottom: 0; width: 50px; height: 50px; border-radius: 14px; font-size: 22px;">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M2 21V15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.35"/>
+            <path d="M8.5 21V9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+            <path d="M15 21V13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>
+            <path d="M21.5 21V5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M1 8.5H23" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2.4 2.4" opacity="0.45"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-family:'Sora',sans-serif; font-weight:700; font-size:22px; margin-bottom:6px; letter-spacing:-0.01em;">Rounding Methods Demonstrator</h2>
+          <p style="color:var(--ink-soft); font-size:14px; line-height:1.5;">Test chopping, round-up, round-down, and round-to-nearest methods based on targeted precision.</p>
+        </div>
+      </div>
+
+      <!-- Input Controls -->
+      <div class="Header" style="margin-bottom: 24px;">
+        <div class="input-output" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="input field-row" style="margin-bottom: 0; background: #F7F6FD;">
+            <label for="numberInput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:6px;">Number Input</label>
+            <input type="text" id="numberInput" placeholder="Enter decimal or binary number" style="width: 100%; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--ink); outline: none;">
+          </div>
+          <div class="output field-row" style="margin-bottom: 0; background: #F7F6FD;">
+            <label for="precisionInput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:6px;">Target Precision</label>
+            <input type="number" id="precisionInput" placeholder="Enter target digits/bits" style="width: 100%; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 15px; color: var(--ink); outline: none;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Rounding Results Section -->
+      <div class="Analysis">
+        <h3 style="font-family:'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin-bottom: 12px;">ROUNDING RESULTS</h3>
+        <div class="analysis-style" style="display: flex; flex-direction: column; gap: 10px;">
+          
+          <section class="sign-analysis field-row" style="margin-bottom: 0;">
+            <label for="choppingOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Chopping</label>
+            <output id="choppingOutput" class="bit-output mono" style="display:block; font-size: 15px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+
+          <section class="exponent-analysis field-row" style="margin-bottom: 0;">
+            <label for="roundUpOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Round-Up</label>
+            <output id="roundUpOutput" class="bit-output mono" style="display:block; font-size: 15px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+
+          <section class="mantissa-analysis field-row" style="margin-bottom: 0;">
+            <label for="roundDownOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Round-Down</label>
+            <output id="roundDownOutput" class="bit-output mono" style="display:block; font-size: 15px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+
+          <section class="mantissa-analysis field-row" style="margin-bottom: 0;">
+            <label for="roundNearestOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Round-to-Nearest (Ties-to-Even)</label>
+            <output id="roundNearestOutput" class="bit-output mono" style="display:block; font-size: 15px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+  <script src="script.js"></script>
+  <script src="../backend/RoundingMethods.js"></script>
+</body>
+</html>

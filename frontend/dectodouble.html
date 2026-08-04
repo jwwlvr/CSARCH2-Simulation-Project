@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Decimal to IEEE 754 Converter | Machine 3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="DecToDouble.css">
+</head>
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <nav style="background: var(--bg); border-bottom: 1px solid var(--line);">
+    <div class="brand">
+      <div class="logo-dot"><i></i><i></i></div>
+      <div class="brand-name"><a href="index.html">Machine 3</a> <span>IEEE 754 · double precision</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="converter.html" style="color: var(--ink);">Converter</a>
+      <a href="rounding.html">Rounding</a>
+    </div>
+    <div class="team-menu" id="teamMenu">
+      <button class="nav-cta" id="teamBtn" aria-expanded="false">Team</button>
+      <div class="team-dropdown" id="teamDropdown">
+        <div class="team-dropdown-title">Section S04</div>
+        <ul>
+          <li>Austria, Ma. Alexandria</li>
+          <li>Campos, Don Oswin</li>
+          <li>Encallado, Edlynn Rei</li>
+          <li>Gildore, Andrei Miguel</li>
+          <li>Patricio, Anne Beatriz</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- STANDALONE CONVERTER PAGE CONTAINER -->
+  <main style="max-width: 900px; margin: 40px auto; padding: 0 20px 80px;">
+    
+    <div class="card c1" style="cursor: default; transform: none; box-shadow: var(--shadow); padding: 36px;">
+      
+      <!-- Card Header / Title Icon Block -->
+      <div style="display: flex; align-items: flex-start; gap: 18px; margin-bottom: 28px;">
+        <div class="icon" style="margin-bottom: 0; width: 50px; height: 50px; border-radius: 14px; font-size: 22px;">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="1" y="6" width="3" height="14" rx="1.2" fill="currentColor" opacity="0.9"/>
+            <rect x="6" y="10" width="9" height="6" rx="1.2" fill="currentColor" opacity="0.55"/>
+            <rect x="17" y="4" width="8" height="18" rx="1.2" fill="currentColor" opacity="0.3"/>
+            <path d="M13 1.5V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M10.3 4.2 13 6.8 15.7 4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-family:'Sora',sans-serif; font-weight:700; font-size:22px; margin-bottom:6px; letter-spacing:-0.01em;">Decimal to IEEE 754 Converter</h2>
+          <p style="color:var(--ink-soft); font-size:14px; line-height:1.5;">Convert decimal numbers to double-precision format instantly.</p>
+        </div>
+      </div>
+
+      <!-- Input/Output Controls -->
+      <div class="Header" style="margin-bottom: 24px;">
+        <div class="input-output" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="input field-row" style="margin-bottom: 0; background: #F7F6FD;">
+            <label for="decimalInput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:6px;">Decimal Input</label>
+            <input type="text" id="decimalInput" placeholder="Enter a decimal number" style="width: 100%; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: var(--ink); outline: none;">
+          </div>
+          <div class="output field-row" style="margin-bottom: 0; background: #F7F6FD;">
+            <label for="floatOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:6px;">Float Output (Hexadecimal)</label>
+            <input type="text" id="floatOutput" readonly style="width: 100%; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 16px; color: var(--ink); outline: none;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 64-Bit Layout Section -->
+      <div class="bit-layout" style="margin-bottom: 24px;">
+        <h3 style="font-family:'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin-bottom: 12px;">64-BIT LAYOUT</h3>
+        <div class="layout-style" style="display: flex; flex-direction: column; gap: 10px;">
+          <section class="sign-bit field-row" style="margin-bottom: 0;">
+            <label for="signBitOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Sign Bit</label>
+            <output id="signBitOutput" class="bit-output mono" style="display: block; font-size: 15px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+          <section class="exponent-bits field-row" style="margin-bottom: 0;">
+            <label for="exponentBitsOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Exponent Bits</label>
+            <output id="exponentBitsOutput" class="bit-output mono" style="display: block; font-size: 15px; font-weight: 600; color: var(--ink); overflow-x: auto;"></output>
+          </section>
+          <section class="mantissa-bits field-row" style="margin-bottom: 0;">
+            <label for="mantissaBitsOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Mantissa Bits</label>
+            <output id="mantissaBitsOutput" class="bit-output mono" style="display: block; font-size: 14px; font-weight: 600; color: var(--ink); overflow-x: auto;"></output>
+          </section>
+        </div>
+      </div>
+
+      <!-- Representation Analysis Section -->
+      <div class="Analysis">
+        <h3 style="font-family:'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin-bottom: 12px;">REPRESENTATION ANALYSIS</h3>
+        <div class="analysis-style" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <section class="sign-analysis field-row" style="margin-bottom: 0;">
+            <label for="signAnalysisOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Sign</label>
+            <output id="signAnalysisOutput" class="bit-output mono" style="display:block; font-size: 14px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+          <section class="exponent-analysis field-row" style="margin-bottom: 0;">
+            <label for="exponentAnalysisOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Exponent (E+1023)</label>
+            <output id="exponentAnalysisOutput" class="bit-output mono" style="display:block; font-size: 14px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+          <section class="mantissa-analysis field-row" style="margin-bottom: 0;">
+            <label for="mantissaAnalysisOutput" class="label" style="display:block; font-size:11px; color:var(--ink-soft); font-weight:600; margin-bottom:4px;">Mantissa</label>
+            <output id="mantissaAnalysisOutput" class="bit-output mono" style="display:block; font-size: 14px; font-weight: 600; color: var(--ink);"></output>
+          </section>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+  <script src="script.js"></script>
+  <script src="../backend/DecToDoubleConverter.js"></script>
+</body>
+</html>

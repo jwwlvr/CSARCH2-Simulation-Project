@@ -233,7 +233,60 @@ console.log(
 );
 
 
+//action listener for rounding.html
+document.addEventListener("DOMContentLoaded", () => {
+    const numberInput = document.getElementById('numberInput');
+    const precisionInput = document.getElementById('precisionInput');
+    
+    const choppingOutput = document.getElementById('choppingOutput');
+    const roundUpOutput = document.getElementById('roundUpOutput');
+    const roundDownOutput = document.getElementById('roundDownOutput');
+    const roundNearestOutput = document.getElementById('roundNearestOutput');
 
+    function handleRoundingConversion() {
+        const numValue = numberInput.value.trim();
+        const precValue = precisionInput.value.trim();
 
+        if (!numValue || !precValue) {
+            choppingOutput.textContent = "";
+            roundUpOutput.textContent = "";
+            roundDownOutput.textContent = "";
+            roundNearestOutput.textContent = "";
+            return;
+        }
+
+        try {
+            const targetDigits = parseInt(precValue, 10);
+            
+            if (isNaN(targetDigits) || targetDigits < 0) {
+                return;
+            }
+
+            //Calling the rounding methods and updating the output fields base on the result
+            const result = RoundingMethod.roundAll(numValue, targetDigits);
+
+            if (!result || result === "Invalid Input") {
+                choppingOutput.textContent = "";
+                roundUpOutput.textContent = "";
+                roundDownOutput.textContent = "";
+                roundNearestOutput.textContent = "";
+                return;
+            }
+
+            choppingOutput.textContent = result.chopping || result.chop || "";
+            roundUpOutput.textContent = result.roundUp || "";
+            roundDownOutput.textContent = result.roundDown || "";
+            roundNearestOutput.textContent = result.tiesToEven || result.roundNearest || "";
+        } catch (e) {
+            // handle error silently
+        }
+    }
+
+    // It creates a listener on both input fields and deploys the function whenever a change occurs in either of them.
+    ['input', 'change', 'keyup'].forEach(eventType => {
+        numberInput.addEventListener(eventType, handleRoundingConversion);
+        precisionInput.addEventListener(eventType, handleRoundingConversion);
+    });
+});
 
 

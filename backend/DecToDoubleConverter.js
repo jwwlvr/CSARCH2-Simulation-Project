@@ -233,3 +233,90 @@ console.log(DecToDoubleConverter.convert("-0.1"));
 
 console.log("snan");
 console.log(DecToDoubleConverter.convert("snan"));
+
+
+//Event listener for dectodouble.html
+document.addEventListener("DOMContentLoaded", () => {
+    const decimalInput = document.getElementById('decimalInput');
+    const floatOutput = document.getElementById('floatOutput');
+    
+    // 64-Bit Layout outputs
+    const signBitOutput = document.getElementById('signBitOutput');
+    const exponentBitsOutput = document.getElementById('exponentBitsOutput');
+    const mantissaBitsOutput = document.getElementById('mantissaBitsOutput');
+
+    // Representation Analysis outputs
+    const signAnalysisOutput = document.getElementById('signAnalysisOutput');
+    const exponentAnalysisOutput = document.getElementById('exponentAnalysisOutput');
+    const mantissaAnalysisOutput = document.getElementById('mantissaAnalysisOutput');
+
+    function handleConversion() {
+        const value = decimalInput.value;
+
+        // Clear output fields if input is empty
+        if (!value.trim()) {
+            floatOutput.value = "";
+            signBitOutput.textContent = "";
+            exponentBitsOutput.textContent = "";
+            mantissaBitsOutput.textContent = "";
+            signAnalysisOutput.textContent = "";
+            exponentAnalysisOutput.textContent = "";
+            mantissaAnalysisOutput.textContent = "";
+            return;
+        }
+
+        try {
+            const result = DecToDoubleConverter.convert(value);
+
+            if (result && result.binary) {
+                floatOutput.value = result.hex || "";
+
+                const parts = result.binary.split(" ");
+                
+                // Bit layout outputs
+                signBitOutput.textContent = parts[0] || "";
+                exponentBitsOutput.textContent = parts[1] || "";
+                mantissaBitsOutput.textContent = parts[2] || "";
+
+                // Sign analysis
+                signAnalysisOutput.textContent = `${result.sign === "+" ? "Positive (+)" : "Negative (-)"} -> Bit: ${parts[0]}`;
+
+                // Exponent analysis with error handling
+                let normText = result.text ? result.text.find(t => t.startsWith("Normalized Binary:")) : null;
+                if (normText) {
+                    let rawExponent = BigInt(normText.split(": ")[1] || "0");
+                    let biasedValue = rawExponent + 1023n;
+                    exponentAnalysisOutput.textContent = `${rawExponent} + 1023 = ${biasedValue} (${parts[1] || ""})`;
+                } else {
+                    exponentAnalysisOutput.textContent = parts[1] || "N/A";
+                }
+
+                // Mantissa analysis
+                let mantText = result.text ? result.text.find(t => t.startsWith("Mantissa:")) : null;
+                let mantissaBits = mantText ? mantText.replace("Mantissa: ", "") : (parts[2] || "");
+
+                //turn the matissa bits into its decimal equivalent
+                let decimalValue = 0;
+                for(let i = 0; i < mantissaBits.length; i++) {
+                    if(mantissaBits[i] === "1"){
+                        decimalValue += Math.pow(2, -(i + 1));
+                    }
+                }
+
+
+                mantissaAnalysisOutput.textContent = decimalValue.toFixed(10);
+            }
+        } catch (error) {
+            // Handle possible errors due to user input
+            floatOutput.value = "Processing...";
+            signBitOutput.textContent = "—";
+            exponentBitsOutput.textContent = "—";
+            mantissaBitsOutput.textContent = "—";
+            signAnalysisOutput.textContent = "Waiting for valid number...";
+            exponentAnalysisOutput.textContent = "—";
+            mantissaAnalysisOutput.textContent = "—";
+        }
+    }
+
+    decimalInput.addEventListener('input', handleConversion);
+});
