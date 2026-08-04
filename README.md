@@ -76,7 +76,11 @@
 
 ## Screenshots
 
-> *To be added.*
+**Convert Decimal to Binary:**
+<p align="center">
+  <img src="cvt1.1.jpg" width="45%" />
+  <img src="cvt1.2.jpg" width="45%" />
+</p>
 
 ---
 
