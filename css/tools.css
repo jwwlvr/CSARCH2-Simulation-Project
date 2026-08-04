@@ -1,0 +1,261 @@
+/* Shared chrome for tool pages (converter, rounding, arithmetic). */
+
+.tool-main{
+  max-width:1180px;
+  margin:0 auto;
+  padding:48px clamp(20px, 4vw, 40px) 100px;
+}
+
+/* Header: no icon badge, no step numbering — each tool is independent */
+.tool-header{
+  margin-bottom:32px;
+  max-width:720px;
+}
+.tool-header .eyebrow{ margin-bottom:16px; }
+.tool-header h1{
+  font-family:'Sora', sans-serif;
+  font-weight:700;
+  font-size:clamp(24px, 3vw, 32px);
+  letter-spacing:-0.01em;
+  margin-bottom:10px;
+}
+.tool-header p{
+  color:var(--ink-soft);
+  font-size:15px;
+  line-height:1.6;
+}
+
+/* Two-column layout: inputs on the left (sticky), results on the right.
+   Gives the tool room to breathe and keeps controls visible while
+   longer output (e.g. arithmetic steps) scrolls. */
+.tool-layout{
+  display:grid;
+  grid-template-columns:minmax(300px, 380px) 1fr;
+  gap:28px;
+  align-items:start;
+}
+@media (max-width:900px){
+  .tool-layout{ grid-template-columns:1fr; }
+}
+
+.tool-card{
+  background:var(--card);
+  border-radius:24px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--line);
+  padding:28px clamp(20px, 3vw, 32px);
+}
+
+.tool-input-card{
+  position:sticky;
+  top:24px;
+}
+@media (max-width:900px){
+  .tool-input-card{ position:static; }
+}
+
+.tool-section + .tool-section{ margin-top:26px; }
+
+.tool-section-title{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  color:var(--ink-soft);
+  margin-bottom:14px;
+}
+
+.tool-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+.tool-layout .tool-output-card .tool-grid{ grid-template-columns:1fr 1fr; }
+@media (max-width:640px){
+  .tool-layout .tool-output-card .tool-grid{ grid-template-columns:1fr; }
+}
+
+/* Input fields: a small purple dot on the label marks "this needs your input" */
+.input-with-select{
+  position:relative;
+}
+.input-with-select input{
+  padding-right:66px;
+}
+.field .input-with-select select{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:auto;
+  border:none;
+  background-color:rgba(108,92,231,0.12);
+  color:var(--purple-dark);
+  font-family:'Inter', sans-serif;
+  font-weight:700;
+  font-size:12px;
+  padding:5px 22px 5px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  appearance:none;
+  background-image:linear-gradient(45deg, transparent 50%, var(--purple-dark) 50%), linear-gradient(135deg, var(--purple-dark) 50%, transparent 50%);
+  background-position: calc(100% - 12px) center, calc(100% - 8px) center;
+  background-size:4px 4px, 4px 4px;
+  background-repeat:no-repeat;
+}
+.field .input-with-select select:focus{
+  outline:2px solid var(--purple);
+  outline-offset:2px;
+  background-color:#fff;
+}
+
+.field label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink-soft);
+  margin-bottom:7px;
+}
+.field label::before{
+  content:"";
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--purple);
+  flex-shrink:0;
+}
+.field input, .field select{
+  width:100%;
+  border:1.5px solid var(--line);
+  background:#F7F6FD;
+  border-radius:12px;
+  padding:12px 14px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:15px;
+  color:var(--ink);
+  outline:none;
+  transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.field input:focus, .field select:focus{
+  border-color:var(--purple);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(108,92,231,0.12);
+}
+.field input[readonly]{
+  color:var(--ink-soft);
+  cursor:default;
+  background:#F7F6FD;
+}
+/* A readonly field is an output, not an input — mark it teal, not purple */
+.field.is-output label::before{ background:var(--man); }
+.field.is-output input{ font-weight:600; }
+
+.field select{
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  appearance:none;
+  background-image:linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%), linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+  background-position:calc(100% - 20px) center, calc(100% - 15px) center;
+  background-size:5px 5px, 5px 5px;
+  background-repeat:no-repeat;
+}
+
+/* Results: a teal dot marks "this is computed output" */
+.result-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.result-row{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  background:#F0FAF7;
+  border:1px solid rgba(23,184,151,0.14);
+  border-radius:12px;
+  padding:12px 16px;
+}
+.result-row .k{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--ink-soft);
+  flex-shrink:0;
+}
+.result-row .k::before{
+  content:"";
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--man);
+  flex-shrink:0;
+}
+.result-row .v{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--ink);
+  text-align:right;
+  overflow-wrap:anywhere;
+}
+.result-row:has(.v:empty){
+  opacity:0.45;
+}
+.result-row.is-3col{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:14px;
+}
+.result-row.is-3col .cell{ min-width:0; }
+.result-row.is-3col .k{ margin-bottom:4px; }
+.result-row.is-3col .v{ text-align:left; font-size:13.5px; }
+@media (max-width:640px){
+  .result-row.is-3col{ grid-template-columns:1fr; }
+}
+
+.tool-note{
+  margin-top:22px;
+  font-size:12.5px;
+  color:var(--ink-soft);
+  line-height:1.6;
+}
+.tool-note code{
+  font-family:'IBM Plex Mono', monospace;
+  background:#F7F6FD;
+  padding:1px 6px;
+  border-radius:6px;
+}
+
+.tool-inline-msg{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--purple-dark);
+  background:rgba(108,92,231,0.08);
+  border:1px solid rgba(108,92,231,0.18);
+  border-radius:10px;
+  padding:10px 14px;
+  line-height:1.5;
+}
+.tool-inline-msg:empty{ display:none; }
+
+/* Arithmetic page extras */
+.steps-list{
+  background:#F7F6FD;
+  border-radius:12px;
+  padding:16px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  list-style:none;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:13px;
+  color:var(--ink);
+  line-height:1.6;
+}
+.steps-list li{ overflow-wrap:anywhere; }
+.steps-list:empty{ display:none; }

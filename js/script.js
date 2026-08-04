@@ -69,10 +69,8 @@ document.querySelectorAll(".card").forEach((c) => {
   });
 });
 
-// Hero CTA buttons scroll down into the white panel
-document.getElementById("scrollDownBtn")?.addEventListener("click", () => {
-  document.querySelector(".panel").scrollIntoView({ behavior: "smooth" });
-});
+// Hero CTA: "Start Converting" now links straight to the converter page (see index.html).
+// "See Tools" still scrolls down into the white panel.
 document.getElementById("scrollArithBtn")?.addEventListener("click", () => {
   document.querySelector(".panel").scrollIntoView({ behavior: "smooth" });
   setTimeout(() => {
@@ -80,25 +78,4 @@ document.getElementById("scrollArithBtn")?.addEventListener("click", () => {
   }, 500);
 });
 
-// Team dropdown
-const teamMenu = document.querySelector(".team-menu");
-const teamBtn = document.getElementById("teamBtn");
-if (teamBtn && teamMenu) {
-  teamBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const isOpen = teamMenu.classList.toggle("open");
-    teamBtn.setAttribute("aria-expanded", isOpen);
-  });
-  document.addEventListener("click", (e) => {
-    if (!teamMenu.contains(e.target)) {
-      teamMenu.classList.remove("open");
-      teamBtn.setAttribute("aria-expanded", "false");
-    }
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      teamMenu.classList.remove("open");
-      teamBtn.setAttribute("aria-expanded", "false");
-    }
-  });
-}
+// Team dropdown is now handled by the shared nav.js (loaded before this file).

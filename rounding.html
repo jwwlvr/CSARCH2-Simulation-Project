@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rounding Methods | Machine 3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tools.css">
+</head>
+<body>
+
+  <nav class="tool-nav" id="site-nav" data-active="rounding"></nav>
+
+  <main class="tool-main">
+    <header class="tool-header">
+      <div class="eyebrow"><span class="dot"></span> Chopping · up · down · ties-to-even</div>
+      <h1>Rounding methods</h1>
+      <p>Test chopping, round-up, round-down, and round-to-nearest methods based on targeted precision.</p>
+    </header>
+
+    <div class="tool-layout">
+      <div class="tool-card tool-input-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Input</h2>
+          <div class="field">
+            <label for="numberInput">Number</label>
+            <div class="input-with-select">
+              <input type="text" id="numberInput" placeholder="Decimal or binary" autocomplete="off">
+              <select id="numberFormat" aria-label="Number format">
+                <option value="decimal">Dec</option>
+                <option value="binary">Bin</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tool-section">
+          <div class="field">
+            <label for="precisionInput">Target precision</label>
+            <input type="number" id="precisionInput" min="0" placeholder="e.g. 2">
+          </div>
+        </div>
+        <p class="tool-inline-msg" id="roundingHint"></p>
+        <p class="tool-note">Make sure the format dropdown matches your input: <code>0–9</code> for Decimal, <code>0</code> and <code>1</code> only for Binary.</p>
+      </div>
+
+      <div class="tool-card tool-output-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Rounding results</h2>
+          <div class="result-list">
+            <div class="result-row"><span class="k">Chopping</span><output class="v" id="choppingOutput"></output></div>
+            <div class="result-row"><span class="k">Round-up</span><output class="v" id="roundUpOutput"></output></div>
+            <div class="result-row"><span class="k">Round-down</span><output class="v" id="roundDownOutput"></output></div>
+            <div class="result-row"><span class="k">Round-to-nearest, ties-to-even</span><output class="v" id="roundNearestOutput"></output></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/RoundingMethods.js"></script>
+</body>
+</html>

@@ -2,41 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Machine 3 — Binary 64-bit Floating-Point Machine</title>
+<title>Machine 3: Binary 64-bit Floating-Point Machine</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <!-- HERO -->
 <div class="hero-block">
 
-  <nav>
-    <div class="brand">
-      <div class="logo-dot"><i></i><i></i></div>
-      <div class="brand-name">Machine 3 <span>IEEE 754 · double precision</span></div>
-    </div>
-    <div class="nav-links">
-      <a href="dectodouble.html">Convert</a>
-      <a href="rounding.html">Rounding</a>
-      <a href="#arith">Arithmetic</a>
-    </div>
-    <div class="team-menu">
-      <button class="nav-cta" id="teamBtn" aria-expanded="false">Team</button>
-      <div class="team-dropdown" id="teamDropdown">
-        <div class="team-dropdown-title">Section S04</div>
-        <ul>
-          <li>Austria, Ma. Alexandria</li>
-          <li>Campos, Don Oswin</li>
-          <li>Encallado, Edlynn Rei</li>
-          <li>Gildore, Andrei Miguel</li>
-          <li>Patricio, Anne Beatriz</li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<nav class="tool-nav" id="site-nav" data-active="home"></nav>
 
   <section class="hero">
     <div class="hero-copy">
@@ -44,8 +21,8 @@
       <h1>Turn any decimal into its <span class="accent">64-bit form.</span></h1>
       <p class="sub">Convert decimal numbers to IEEE 754 double precision format. Includes rounding methods and step-by-step addition and multiplication.</p>
       <div class="hero-ctas">
-        <button class="btn-primary" id="scrollDownBtn">Start Converting</button>
-        <button class="btn-ghost" id="scrollArithBtn">See Arithmetic →</button>
+        <a class="btn-primary" id="scrollDownBtn" href="dectodouble.html">Start Converting</a>
+        <button class="btn-ghost" id="scrollArithBtn">See Tools →</button>
       </div>
     </div>
 
@@ -151,29 +128,32 @@
       </div>
     </a>
 
-    <div class="card c3" id="arith" tabindex="0">
-      <div class="icon">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-          <rect x="1" y="3" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
-          <rect x="1" y="16" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
-          <circle cx="6.5" cy="6.5" r="1.4" fill="currentColor"/>
-          <circle cx="11.5" cy="6.5" r="1.4" fill="currentColor" opacity="0.5"/>
-          <circle cx="6.5" cy="19.5" r="1.4" fill="currentColor" opacity="0.5"/>
-          <circle cx="11.5" cy="19.5" r="1.4" fill="currentColor"/>
-          <path d="M20 4.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M17.5 6.75H22.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+    <a href="arithmetic.html">
+      <div class="card c3" id="arith" tabindex="0">
+        <div class="icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="1" y="3" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
+            <rect x="1" y="16" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
+            <circle cx="6.5" cy="6.5" r="1.4" fill="currentColor"/>
+            <circle cx="11.5" cy="6.5" r="1.4" fill="currentColor" opacity="0.5"/>
+            <circle cx="6.5" cy="19.5" r="1.4" fill="currentColor" opacity="0.5"/>
+            <circle cx="11.5" cy="19.5" r="1.4" fill="currentColor"/>
+            <path d="M20 4.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M17.5 6.75H22.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Add & Multiply</h3>
+        <p>Add or multiply two IEEE 754 numbers with step-by-step Guard, Round, and Sticky bit calculation.</p>
+        <span class="go">Open arithmetic</span>
       </div>
-      <h3>Add & Multiply</h3>
-      <p>Add or multiply two IEEE 754 numbers with step-by-step Guard, Round, and Sticky bit calculation.</p>
-      <span class="go">Open arithmetic</span>
-    </div>
+    </a>
   </section>
 
   <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
 
 </main>
 
-<script src="script.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

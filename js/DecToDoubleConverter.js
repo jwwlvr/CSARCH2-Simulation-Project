@@ -239,6 +239,7 @@ console.log(DecToDoubleConverter.convert("snan"));
 document.addEventListener("DOMContentLoaded", () => {
     const decimalInput = document.getElementById('decimalInput');
     const floatOutput = document.getElementById('floatOutput');
+    const fullBinaryOutput = document.getElementById('fullBinaryOutput');
     
     // 64-Bit Layout outputs
     const signBitOutput = document.getElementById('signBitOutput');
@@ -255,7 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Clear output fields if input is empty
         if (!value.trim()) {
-            floatOutput.value = "";
+            floatOutput.textContent = "";
+            fullBinaryOutput.textContent = "";
             signBitOutput.textContent = "";
             exponentBitsOutput.textContent = "";
             mantissaBitsOutput.textContent = "";
@@ -269,7 +271,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = DecToDoubleConverter.convert(value);
 
             if (result && result.binary) {
-                floatOutput.value = result.hex || "";
+                floatOutput.textContent = result.hex || "";
+                fullBinaryOutput.textContent = result.binary || "";
 
                 const parts = result.binary.split(" ");
                 
@@ -307,14 +310,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 mantissaAnalysisOutput.textContent = decimalValue.toFixed(10);
             }
         } catch (error) {
-            // Handle possible errors due to user input
-            floatOutput.value = "Processing...";
-            signBitOutput.textContent = "—";
-            exponentBitsOutput.textContent = "—";
-            mantissaBitsOutput.textContent = "—";
-            signAnalysisOutput.textContent = "Waiting for valid number...";
-            exponentAnalysisOutput.textContent = "—";
-            mantissaAnalysisOutput.textContent = "—";
+            // Input isn't a complete/valid number yet (e.g. mid-typing) — clear outputs quietly
+            floatOutput.textContent = "";
+            fullBinaryOutput.textContent = "";
+            signBitOutput.textContent = "";
+            exponentBitsOutput.textContent = "";
+            mantissaBitsOutput.textContent = "";
+            signAnalysisOutput.textContent = "";
+            exponentAnalysisOutput.textContent = "";
+            mantissaAnalysisOutput.textContent = "";
         }
     }
 

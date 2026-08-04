@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Decimal → IEEE 754 Converter | Machine 3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tools.css">
+</head>
+<body>
+
+  <nav class="tool-nav" id="site-nav" data-active="converter"></nav>
+
+  <main class="tool-main">
+    <header class="tool-header">
+      <div class="eyebrow"><span class="dot"></span> Decimal → binary</div>
+      <h1>Decimal to IEEE 754 double precision</h1>
+      <p>Convert decimal numbers to double-precision format instantly.</p>
+    </header>
+
+    <div class="tool-layout">
+      <div class="tool-card tool-input-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Input</h2>
+          <div class="field">
+            <label for="decimalInput">Decimal value</label>
+            <input type="text" id="decimalInput" placeholder="Decimal number" autocomplete="off">
+          </div>
+        </div>
+        <p class="tool-note">Special values are supported directly: try <code>0</code>, <code>-0</code>, <code>Infinity</code>, <code>-Infinity</code>, <code>NaN</code>, and <code>sNaN</code>.</p>
+      </div>
+
+      <div class="tool-card tool-output-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Result</h2>
+          <div class="result-list">
+            <div class="result-row"><span class="k">Binary, 64 bits</span><output class="v" id="fullBinaryOutput"></output></div>
+            <div class="result-row"><span class="k">Hexadecimal</span><output class="v" id="floatOutput"></output></div>
+          </div>
+        </div>
+        <div class="tool-section">
+          <h2 class="tool-section-title">64-bit layout</h2>
+          <div class="result-list">
+            <div class="result-row"><span class="k">Sign · 1 bit</span><output class="v" id="signBitOutput"></output></div>
+            <div class="result-row"><span class="k">Exponent · 11 bits</span><output class="v" id="exponentBitsOutput"></output></div>
+            <div class="result-row"><span class="k">Mantissa · 52 bits</span><output class="v" id="mantissaBitsOutput"></output></div>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <h2 class="tool-section-title">Representation analysis</h2>
+          <div class="result-row is-3col">
+            <div class="cell"><span class="k">Sign</span><output class="v" id="signAnalysisOutput"></output></div>
+            <div class="cell"><span class="k">Exponent (E + 1023)</span><output class="v" id="exponentAnalysisOutput"></output></div>
+            <div class="cell"><span class="k">Mantissa (decimal)</span><output class="v" id="mantissaAnalysisOutput"></output></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/DecToDoubleConverter.js"></script>
+</body>
+</html>

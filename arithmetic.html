@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add & Multiply | Machine 3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/tools.css">
+<style>
+  /* Compact table styling for the step-by-step trace — the green result-list
+     cards work fine for a handful of short rows (the Final Result box) but
+     turn into a wall of oversized panels once there are 9-10 verbose steps
+     with long hex/binary values. This gives the trace its own lean look:
+     a plain table, small monospace text, thin divider lines, no per-row
+     card/background. */
+  .steps-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+  .steps-table tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .steps-table tr:last-child {
+    border-bottom: none;
+  }
+  .steps-table td {
+    padding: 7px 8px;
+    vertical-align: top;
+  }
+  .steps-table td.step-label {
+    white-space: nowrap;
+    color: #6b7280;
+    font-weight: 600;
+    padding-right: 14px;
+    width: 1%;
+  }
+  .steps-table td.step-detail {
+    color: #1f2937;
+    word-break: break-word;
+  }
+  .steps-table td.step-full {
+    color: #1f2937;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+  <nav class="tool-nav" id="site-nav" data-active="arithmetic"></nav>
+
+  <main class="tool-main">
+    <header class="tool-header">
+      <div class="eyebrow"><span class="dot"></span> Add · multiply · GRS rounding</div>
+      <h1>Addition & multiplication</h1>
+      <p>Enter two operands, decimal or 16-digit hex, and see the Guard/Round/Sticky logic.</p>
+    </header>
+
+    <div class="tool-layout">
+      <div class="tool-card tool-input-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Input</h2>
+          <div class="field">
+            <label for="operandA">Operand A</label>
+            <div class="input-with-select">
+              <input type="text" id="operandA" placeholder="Decimal or 16-digit hex" autocomplete="off">
+              <select id="operandAFormat" aria-label="Operand A format">
+                <option value="decimal">Dec</option>
+                <option value="hex">Hex</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tool-section">
+          <div class="field">
+            <label for="operandB">Operand B</label>
+            <div class="input-with-select">
+              <input type="text" id="operandB" placeholder="Decimal or 16-digit hex" autocomplete="off">
+              <select id="operandBFormat" aria-label="Operand B format">
+                <option value="decimal">Dec</option>
+                <option value="hex">Hex</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tool-section">
+          <div class="field">
+            <label for="operationSelect">Operation</label>
+            <select id="operationSelect">
+              <option value="add">Addition</option>
+              <option value="multiply">Multiplication</option>
+            </select>
+          </div>
+        </div>
+        <p class="tool-note">Operands can be entered as decimal or as 16-digit hex representing the raw IEEE 754 bit pattern (e.g. <code>4009000000000000</code>). Special values like <code>Infinity</code>, <code>-Infinity</code>, and <code>NaN</code> are supported.</p>
+      </div>
+
+      <div class="tool-card tool-output-card">
+        <div class="tool-section">
+          <h2 class="tool-section-title">Final result</h2>
+          <div class="result-list">
+            <div class="result-row"><span class="k">Binary</span><output class="v" id="finalBinary"></output></div>
+            <div class="result-row"><span class="k">Hexadecimal</span><output class="v" id="finalHex"></output></div>
+            <div class="result-row"><span class="k">Decimal</span><output class="v" id="finalDecimal"></output></div>
+          </div>
+        </div>
+        <div class="tool-section">
+          <h2 class="tool-section-title">Step-by-step solution</h2>
+          <table class="steps-table"><tbody id="stepsList"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+  <script src="js/nav.js"></script>
+  <script src="js/DecToDoubleConverter.js"></script>
+  <script src="js/IEEE754Arithmetic.js"></script>
+</body>
+</html>

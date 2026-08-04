@@ -41,7 +41,15 @@ nav{
   display:flex; align-items:center; justify-content:space-between;
   padding:26px clamp(20px,5vw,56px);
 }
+.tool-nav{
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
 .brand{display:flex; align-items:center; gap:10px;}
+.brand-link{display:flex; align-items:center; gap:10px;}
 .logo-dot{ width:34px; height:34px; position:relative; flex-shrink:0; }
 .logo-dot i{ position:absolute; width:20px; height:20px; border-radius:50%; }
 .logo-dot i:nth-child(1){background:var(--purple); top:0; left:0; opacity:0.95;}
@@ -51,6 +59,7 @@ nav{
 
 .nav-links{display:flex; gap:34px; font-size:14px; font-weight:500; color:var(--ink-soft);}
 .nav-links a:hover{color:var(--ink);}
+.nav-links a.is-active{color:var(--ink);}
 .nav-cta{
   background:var(--ink); color:#fff; padding:10px 20px; border-radius:100px;
   font-size:13px; font-weight:600; box-shadow:var(--shadow-sm);
