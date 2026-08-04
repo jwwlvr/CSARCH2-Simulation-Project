@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rounding Methods Demonstrator</title>
+    <link rel="stylesheet" href="Rounding.css">
+</head>
+<body>
+    
+    <div class="maint container">
+
+        <div class="Header">
+            <h1>Rounding Methods</h1>
+            <div class="input-output">
+                <div class="input">
+                    <label for="numberInput">Number Input</label>
+                    <input type="text" id="numberInput" placeholder="Enter decimal or binary number">
+                </div>
+                <div class="output">
+                    <label for="precisionInput">Target Precision</label>
+                    <input type="number" id="precisionInput" placeholder="Enter target digits/bits">
+                </div>
+            </div>
+        </div>
+
+        <div class="Analysis">
+            <h3>ROUNDING RESULTS</h3>
+            <div class="analysis-style">
+                <section class="sign-analysis">
+                    <label for="choppingOutput">Chopping</label>
+                    <output id="choppingOutput" class="bit-output"></output>
+                </section>
+                <section class="exponent-analysis">
+                    <label for="roundUpOutput">Round-Up</label>
+                    <output id="roundUpOutput" class="bit-output"></output>
+                </section>
+                <section class="mantissa-analysis">
+                    <label for="roundDownOutput">Round-Down</label>
+                    <output id="roundDownOutput" class="bit-output"></output>
+                </section>
+                <section class="mantissa-analysis">
+                    <label for="roundNearestOutput">Round-to-Nearest (Ties-to-Even)</label>
+                    <output id="roundNearestOutput" class="bit-output"></output>
+                </section>
+            </div>
+        </div>
+        
+    </div>
+    <script src="../backend/RoundingMethods.js"></script>
+</body>
+</html>

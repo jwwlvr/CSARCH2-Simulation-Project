@@ -253,3 +253,65 @@ class IEEE754Arithmetic {
         return { operation: "Addition", steps, final: finalFormat };
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const hexInputA = document.getElementById('hexInputA');
+    const hexInputB = document.getElementById('hexInputB');
+    const operationSelect = document.getElementById('operationSelect');
+    const floatOutput = document.getElementById('floatOutput');
+    
+    const signBitOutput = document.getElementById('signBitOutput');
+    const exponentBitsOutput = document.getElementById('exponentBitsOutput');
+    const mantissaBitsOutput = document.getElementById('mantissaBitsOutput');
+
+    const signAnalysisOutput = document.getElementById('signAnalysisOutput');
+    const exponentAnalysisOutput = document.getElementById('exponentAnalysisOutput');
+    const mantissaAnalysisOutput = document.getElementById('mantissaAnalysisOutput');
+
+    function handleArithmetic() {
+        const hexA = hexInputA.value.trim();
+        const hexB = hexInputB.value.trim();
+        const operation = operationSelect.value;
+
+        if (!hexA || !hexB) {
+            floatOutput.value = "";
+            signBitOutput.textContent = "";
+            exponentBitsOutput.textContent = "";
+            mantissaBitsOutput.textContent = "";
+            signAnalysisOutput.textContent = "";
+            exponentAnalysisOutput.textContent = "";
+            mantissaAnalysisOutput.textContent = "";
+            return;
+        }
+
+        try {
+            let result;
+            if (operation === "multiply") {
+                result = IEEE754Arithmetic.multiply(hexA, hexB);
+            } else {
+                result = IEEE754Arithmetic.add(hexA, hexB);
+            }
+
+            if (result && result.final) {
+                floatOutput.value = result.final.hex;
+
+                const parts = result.final.binary.split(" ");
+                signBitOutput.textContent = parts[0] || "";
+                exponentBitsOutput.textContent = parts[1] || "";
+                mantissaBitsOutput.textContent = parts[2] || "";
+
+                signAnalysisOutput.textContent = `Result Sign Bit: ${parts[0]}`;
+                exponentAnalysisOutput.textContent = `Biased Exponent: ${parts[1]}`;
+                
+                let stepLog = result.steps ? result.steps.join("\n") : "";
+                mantissaAnalysisOutput.textContent = `Decimal Value: ${result.final.decimal}\n\nSteps:\n${stepLog}`;
+            }
+        } catch (e) {
+            floatOutput.value = "Error (Invalid Hex)";
+        }
+    }
+
+    hexInputA.addEventListener('input', handleArithmetic);
+    hexInputB.addEventListener('input', handleArithmetic);
+    operationSelect.addEventListener('change', handleArithmetic);
+});

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decimal to Double</title>
+    <link rel="stylesheet" href="DecToDouble.css">
+</head>
+<body>
+    
+    <div class = "main-container">
+
+        <div class="Header">
+            <h1>IEEE 754 Double-Precision Converter</h1>
+            <div class="input-output">
+                <div class="input">
+                    <label for="decimalInput">Decimal Input</label>
+                    <input type="text" id="decimalInput" placeholder="Enter a decimal number">
+                </div>
+                <div class="output">
+                    <label for="floatOutput">Float Output(Hexadecimal)</label>
+                    <input type="text" id="floatOutput" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="bit-layout">
+            <h3>64-BIT LAYOUT</h3>
+            <div class="layout-style">
+                <section class="sign-bit">
+
+                    <output id="signBitOutput" class="bit-output"></output>
+                    <label for="signBitOutput">Sign Bit</label>
+
+                </section>
+                <section class="exponent-bits">
+
+                    <output id="exponentBitsOutput" class="bit-output"></output>
+                    <label for="exponentBitsOutput">Exponent Bits</label>
+
+                </section>
+                <section class="mantissa-bits">
+
+                    <output id="mantissaBitsOutput" class="bit-output"></output>
+                    <label for="mantissaBitsOutput">Mantissa Bits</label>
+                    
+                </section>
+            </div>
+        </div>
+
+        <div class="Analysis">
+            <h3>REPRESENTATION ANALYSIS</h3>
+            <div class="analysis-style">
+
+                <section class="sign-analysis">
+
+                    <label for="signAnalysisOutput">Sign</label>
+                    <output id="signAnalysisOutput" class="bit-output"></output>
+
+                </section>
+                <section class="exponent-analysis">
+
+                    <label for="exponentAnalysisOutput">Exponent(E+1023)</label>
+                    <output id="exponentAnalysisOutput" class="bit-output"></output>
+
+                </section>
+                <section class="mantissa-analysis">
+
+                    <label for="mantissaAnalysisOutput">Mantissa</label>
+                    <output id="mantissaAnalysisOutput" class="bit-output"></output>
+
+                </section>
+
+            </div>
+        </div>
+        
+    </div>
+    <script src="../backend/DecToDoubleConverter.js"></script>
+</body>
+</html>
