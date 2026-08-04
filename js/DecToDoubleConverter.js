@@ -18,22 +18,18 @@ class DecToDoubleConverter {
         }
 
         // check for special cases (string)
+        // NOTE: the leading sign was already stripped into `sign` above, so
+        // these checks must use `sign` rather than re-matching a "-" prefix
+        // (which can never be there anymore — that was the bug: "-0" and
+        // "-Infinity" were silently coming out as +0 / +Infinity).
         let lowerString = string.toLowerCase();
-        // -0
-        if (lowerString === "-0") {
-            return this.pack("1", "00000000000", "0".repeat(52), ["Special case: -0"]);
+        // zero (sign-aware)
+        if (lowerString === "0") {
+            return this.pack(sign, "00000000000", "0".repeat(52), [`Special case: ${sign === "1" ? "-0" : "+0"}`]);
         }
-        // +0
-        if (lowerString === "0" || lowerString === "+0") {
-            return this.pack("0", "00000000000", "0".repeat(52), ["Special case: +0"]);
-        }
-        // - infinity
-        if (lowerString === "-infinity" || lowerString === "-inf") {
-            return this.pack("1", "11111111111", "0".repeat(52), ["Special case: -Infinity"]);
-        }
-        // + infinity
-        if (lowerString === "infinity" || lowerString === "inf" || lowerString === "+infinity" || lowerString === "+inf") {
-            return this.pack("0", "11111111111", "0".repeat(52), ["Special case: +Infinity"]);
+        // infinity (sign-aware)
+        if (lowerString === "infinity" || lowerString === "inf") {
+            return this.pack(sign, "11111111111", "0".repeat(52), [`Special case: ${sign === "1" ? "-Infinity" : "+Infinity"}`]);
         }
         // sNaN
         if (lowerString === "snan") {
