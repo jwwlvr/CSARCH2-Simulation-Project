@@ -34,9 +34,6 @@
 | `RoundingMethods.js` | Chopping, round up, round down, round-to-nearest ties-to-even |
 | `IEEE754Arithmetic.js` | Addition and multiplication using Guard/Round/Sticky bits |
 
-**Deployment**
-- TBD
-
 ---
 
 ## Project Structure
@@ -148,7 +145,7 @@
 
 ## Deployment
 
-> TBD
+> <https://jwwlvr.github.io/CSARCH2-Simulation-Project/>
 
 ---
 
