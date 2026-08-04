@@ -1,13 +1,13 @@
 # Machine 3: Binary 64-bit Floating-Point Machine
 
-**CSARCH2 Simulation Project**  
+**CSARCH2 Simulation Project**
 **3rd Term, AY 2025–2026**
 
 ---
 
 #### Section: S04
-#### Members
 
+#### Members
 - Austria, Ma. Alexandria
 - Campos, Don Oswin
 - Encallado, Edlynn Rei
@@ -24,15 +24,17 @@
 
 ## Tech Stack
 
-**Frontend**
-- HTML, CSS, JavaScript (no framework)
+- **HTML, CSS, JavaScript** — no frameworks or build tools, runs entirely in the browser
 
-**Backend**
-- JavaScript (Node.js)
-- Core modules:
-  - `DecToDoubleConverter.js` — decimal → IEEE 754 double-precision conversion
-  - `RoundingMethods.js` — chopping, round up, round down, round-to-nearest ties-to-even
-  - `IEEE754Arithmetic.js` — addition and multiplication using GRS bits
+**Core Modules**
+
+| Module | Responsibility |
+|---|---|
+| `DecToDoubleConverter.js` | Decimal → IEEE 754 double-precision conversion |
+| `RoundingMethods.js` | Chopping, round up, round down, round-to-nearest ties-to-even |
+| `IEEE754Arithmetic.js` | Addition and multiplication using Guard/Round/Sticky bits |
+| `nav.js` | Shared page navigation |
+| `script.js` | General page scripting |
 
 **Deployment**
 - TBD
@@ -42,16 +44,35 @@
 ## Project Structure
 
 ```text
-frontend/
-  index.html
-  style.css
-  script.js
-backend/
-  DecToDoubleConverter.js
-  RoundingMethods.js
-  IEEE754Arithmetic.js
-README.md
+├── index.html
+├── arithmetic.html
+├── dectodouble.html
+├── rounding.html
+├── README.md
+├── CSARCH2 Simulation Project1 - 3rd Term AY 2025-2026.pdf
+│
+├── css/
+│   ├── style.css
+│   └── tools.css
+│
+└── js/
+    ├── DecToDoubleConverter.js
+    ├── IEEE754Arithmetic.js
+    ├── RoundingMethods.js
+    ├── nav.js
+    └── script.js
 ```
+
+---
+
+## Pages
+
+| Page | Description |
+|---|---|
+| `index.html` | Landing page |
+| `dectodouble.html` | Decimal → IEEE 754 double-precision converter |
+| `rounding.html` | Chopping / round up / round down / round-to-nearest ties-to-even |
+| `arithmetic.html` | Addition & multiplication with GRS rounding trace |
 
 ---
 
@@ -62,13 +83,14 @@ README.md
 ---
 
 ## Deployment
+
 > TBD
 
 ---
 
 ## Video Walkthrough
 
-**YouTube Link:**  
+**YouTube Link:**
 > TBD
 
 ---
