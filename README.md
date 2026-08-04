@@ -78,8 +78,8 @@
 
 **Convert Decimal to Binary:**
 <p align="center">
-  <img src="screenshots/cvt1.1.jpg" width="45%" />
-  <img src="screenshots/cvt1.2.jpg" width="45%" />
+  <img src="screenshots/cvt1.1.jpg" width="49%" />
+  <img src="screenshots/cvt1.2.jpg" width="49%" />
 </p>
 
 ---
