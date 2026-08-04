@@ -1,6 +1,7 @@
 /**
  * IEEE 754 Double Precision (64-bit) Arithmetic Module
  * Uses BigInt for precise bitwise manipulation to simulate hardware-level GRS logic.
+ * Updated to support mixed-sign addition, NaN/Infinity early exits, and subnormals.
  */
 class IEEE754Arithmetic {
     
@@ -11,40 +12,44 @@ class IEEE754Arithmetic {
 
     /**
      * Unpacks a 64-bit hex string into Sign, Exponent, and Mantissa (with hidden bit).
-     * @param {string} hexStr - The 16-character hexadecimal string (e.g., "C029400000000000")
-     * @returns {Object} Unpacked components using BigInt
      */
     static unpackHex(hexStr) {
         const num = BigInt("0x" + hexStr);
         const sign = num >> 63n;
-        const exp = (num >> this.FRACTION_BITS) & 0x7FFn;
+        let exp = (num >> this.FRACTION_BITS) & 0x7FFn;
         let mantissa = num & ((1n << this.FRACTION_BITS) - 1n);
 
-        // Add hidden bit for normalized numbers
-        if (exp > 0n && exp < 2047n) {
-            mantissa = mantissa | this.HIDDEN_BIT;
+        // Identify Special Cases
+        const isZero = (exp === 0n && mantissa === 0n);
+        const isNaN = (exp === 2047n && mantissa !== 0n);
+        const isInfinity = (exp === 2047n && mantissa === 0n);
+
+        // FIX 4: Subnormal Exponent Alignment[cite: 2]
+        // Subnormals have a biased exp of 0, but mathematically behave as exp 1.
+        if (exp === 0n && !isZero) {
+            exp = 1n; 
+        } else if (exp > 0n && exp < 2047n) {
+            mantissa = mantissa | this.HIDDEN_BIT; // Add hidden bit for normalized numbers
         }
 
-        return { sign, exp, mantissa };
+        return { sign, exp, mantissa, isZero, isNaN, isInfinity };
     }
 
     /**
      * Packs Sign, Exponent, and Mantissa back into a 64-bit Hex and Binary string.
      */
     static pack(sign, exp, mantissa) {
-        // Remove hidden bit
+        // Remove hidden bit safely 
         const fraction = mantissa & ((1n << this.FRACTION_BITS) - 1n);
         const result = (sign << 63n) | (exp << this.FRACTION_BITS) | fraction;
         
         let binaryStr = result.toString(2).padStart(64, '0');
-        // Format with proper spacing: Sign(1) Exponent(11) Fraction(52)
         const spacedBinary = `${binaryStr.slice(0, 1)} ${binaryStr.slice(1, 12)} ${binaryStr.slice(12)}`;
         const hexStr = result.toString(16).toUpperCase().padStart(16, '0');
 
         return {
             binary: spacedBinary,
             hex: hexStr,
-            // Note: For true decimal output, you would pass the hex back into a DataView/Float64Array.
             decimal: this.hexToFloat64(hexStr) 
         };
     }
@@ -52,86 +57,94 @@ class IEEE754Arithmetic {
     static hexToFloat64(hex) {
         const buffer = new ArrayBuffer(8);
         const view = new DataView(buffer);
-        // Split 64-bit hex into two 32-bit halves for DataView compatibility
+        // Split 64-bit hex into two 32-bit halves for DataView compatibility[cite: 2]
         view.setUint32(0, parseInt(hex.substring(0, 8), 16));
         view.setUint32(4, parseInt(hex.substring(8, 16), 16));
         return view.getFloat64(0);
     }
 
     /**
+     * Helper to return standard formats for Special Cases
+     */
+    static getSpecialCasePack(type, sign = 0n) {
+        if (type === "NaN") return this.pack(0n, 2047n, 1n << 51n); // qNaN
+        if (type === "Infinity") return this.pack(sign, 2047n, 0n);
+        if (type === "Zero") return this.pack(sign, 0n, 0n);
+    }
+
+    /**
      * Performs Multiplication using GRS.
-     * @param {string} hexA - Operand A in Hex
-     * @param {string} hexB - Operand B in Hex
      */
     static multiply(hexA, hexB) {
         const steps = [];
         const opA = this.unpackHex(hexA);
         const opB = this.unpackHex(hexB);
-
+        
         steps.push(`Step 1: Unpacked Operands.`);
         
         // 1. Determine Sign
         const resultSign = opA.sign ^ opB.sign;
         steps.push(`Step 2: Calculate Sign -> ${opA.sign} XOR ${opB.sign} = ${resultSign}`);
 
+        // FIX 2: Early Exits for Special Cases (Multiply)[cite: 2]
+        if (opA.isNaN || opB.isNaN) return { operation: "Multiplication", steps: ["NaN operand encountered."], final: this.getSpecialCasePack("NaN") };
+        if (opA.isInfinity) {
+            if (opB.isZero) return { operation: "Multiplication", steps: ["Inf * 0 = NaN"], final: this.getSpecialCasePack("NaN") };
+            return { operation: "Multiplication", steps: ["Infinity operand encountered."], final: this.getSpecialCasePack("Infinity", resultSign) };
+        }
+        if (opB.isInfinity) {
+            if (opA.isZero) return { operation: "Multiplication", steps: ["0 * Inf = NaN"], final: this.getSpecialCasePack("NaN") };
+            return { operation: "Multiplication", steps: ["Infinity operand encountered."], final: this.getSpecialCasePack("Infinity", resultSign) };
+        }
+        if (opA.isZero || opB.isZero) return { operation: "Multiplication", steps: ["Multiply by Zero."], final: this.getSpecialCasePack("Zero", resultSign) };
+
         // 2. Add Exponents
         let resultExp = opA.exp + opB.exp - this.BIAS;
-        steps.push(`Step 3: Calculate Exponent -> ${opA.exp} + ${opB.exp} - 1023 = ${resultExp}`);
 
-        // 3. Multiply Mantissas (53 bits * 53 bits = 106 bits)
+        // 3. Multiply Mantissas
         let product = opA.mantissa * opB.mantissa;
-        steps.push(`Step 4: Multiply Mantissas (Yields 106-bit product).`);
-
-        // 4. Normalize and Extract GRS
-        // The radix point is between bit 104 and 105.
-        // Highest possible bit for 53x53 is bit 105.
         let isNormalized = (product & (1n << 105n)) !== 0n;
         
         if (isNormalized) {
             resultExp += 1n;
-            steps.push(`Step 5: Normalization -> Product MSB is 1. Increment exponent to ${resultExp}.`);
         } else {
-            // Shift product left to align it as if bit 105 is the MSB
             product = product << 1n;
-            steps.push(`Step 5: Normalization -> Product shifted left by 1.`);
         }
 
-        // 5. Calculate GRS Bits
-        // The top 53 bits (105 down to 53) are the new mantissa
+        // 4. Calculate GRS Bits
         let newMantissa = product >> 53n;
-        
-        // Bit 52 is Guard
         const G = (product >> 52n) & 1n;
-        // Bit 51 is Round
         const R = (product >> 51n) & 1n;
-        // Bits 50 to 0 make the Sticky bit
         const stickyMask = (1n << 51n) - 1n;
         const S = (product & stickyMask) > 0n ? 1n : 0n;
 
-        steps.push(`Step 6: GRS Extraction -> Guard: ${G}, Round: ${R}, Sticky: ${S}`);
-
-        // 6. Rounding (Round to Nearest, Ties to Even)
+        // 5. Rounding
         if (G === 1n && (R === 1n || S === 1n || (newMantissa & 1n) === 1n)) {
             newMantissa += 1n;
-            steps.push(`Step 7: Rounding -> Rounding up applied.`);
-            
-            // Handle overflow during rounding
             if ((newMantissa & (1n << 53n)) !== 0n) {
                 newMantissa = newMantissa >> 1n;
                 resultExp += 1n;
-                steps.push(`Step 7.1: Overflow during rounding, shifted right and incremented exponent.`);
             }
-        } else {
-            steps.push(`Step 7: Rounding -> Truncated (No rounding up needed).`);
         }
 
-        // 7. Pack and return
+        if (resultExp >= 2047n) {
+            steps.push("Step 7: Exponent Overflow -> Returning Infinity");
+            return { operation: "Multiplication", steps, final: this.getSpecialCasePack("Infinity", resultSign) };
+        }
+        if (resultExp <= 0n) {
+            steps.push(`Step 7: Exponent Underflow (${resultExp}) -> Normalizing to Subnormal`);
+            const shiftAmt = 1n - resultExp;
+            // Shift mantissa down to adjust for subnormal range
+            newMantissa = newMantissa >> (shiftAmt > 54n ? 54n : shiftAmt); 
+            resultExp = 0n;
+        }
+
         const finalFormat = this.pack(resultSign, resultExp, newMantissa);
         return { operation: "Multiplication", steps, final: finalFormat };
     }
 
     /**
-     * Performs Addition using GRS alignment.
+     * Performs Addition (and Subtraction) using GRS alignment.
      */
     static add(hexA, hexB) {
         const steps = [];
@@ -140,7 +153,16 @@ class IEEE754Arithmetic {
         
         steps.push(`Step 1: Unpacked Operands.`);
 
-        // Determine which operand has the larger exponent
+        // FIX 2: Early Exits for Special Cases (Addition)[cite: 2]
+        if (opA.isNaN || opB.isNaN) return { operation: "Addition", steps: ["NaN operand encountered."], final: this.getSpecialCasePack("NaN") };
+        if (opA.isInfinity && opB.isInfinity) {
+            if (opA.sign !== opB.sign) return { operation: "Addition", steps: ["+Inf + -Inf = NaN"], final: this.getSpecialCasePack("NaN") };
+            return { operation: "Addition", steps: ["Inf + Inf = Inf"], final: this.getSpecialCasePack("Infinity", opA.sign) };
+        }
+        if (opA.isInfinity) return { operation: "Addition", steps: ["Infinity operand encountered."], final: this.getSpecialCasePack("Infinity", opA.sign) };
+        if (opB.isInfinity) return { operation: "Addition", steps: ["Infinity operand encountered."], final: this.getSpecialCasePack("Infinity", opB.sign) };
+
+        // Determine Larger vs Smaller
         let larger, smaller;
         if (opA.exp > opB.exp || (opA.exp === opB.exp && opA.mantissa >= opB.mantissa)) {
             larger = opA; smaller = opB;
@@ -148,73 +170,86 @@ class IEEE754Arithmetic {
             larger = opB; smaller = opA;
         }
 
+        let resultSign = larger.sign; 
         const expDiff = larger.exp - smaller.exp;
-        steps.push(`Step 2: Exponent alignment. Difference = ${expDiff}. Shifting smaller mantissa.`);
-
-        // Shift smaller mantissa right and calculate GRS
         let G = 0n, R = 0n, S = 0n;
         let alignedMantissa = smaller.mantissa;
 
+        // Shift smaller mantissa right and calculate GRS
         if (expDiff > 0n) {
-            // Shift amount safely clamped to 55 to prevent massive bitwise shifts
             let shiftAmt = expDiff > 55n ? 55n : expDiff;
-            
-            // Calculate bits shifted out
             const shiftedOut = alignedMantissa & ((1n << shiftAmt) - 1n);
             alignedMantissa = alignedMantissa >> shiftAmt;
 
-            // Extract GRS from the shifted out portion
             G = (shiftedOut >> (shiftAmt - 1n)) & 1n;
             R = shiftAmt > 1n ? (shiftedOut >> (shiftAmt - 2n)) & 1n : 0n;
             const stickyMask = (1n << (shiftAmt - 2n)) - 1n;
             S = (shiftedOut & stickyMask) > 0n ? 1n : 0n;
         }
 
-        steps.push(`Step 3: GRS generated during alignment -> Guard: ${G}, Round: ${R}, Sticky: ${S}`);
-
-        // Note: For a complete implementation, you must handle Addition vs Subtraction here 
-        // based on `opA.sign == opB.sign`. The below strictly adds the aligned mantissas.
-        
-        let resultMantissa = larger.mantissa + alignedMantissa;
+        let resultMantissa;
         let resultExp = larger.exp;
-        let resultSign = larger.sign; // simplified assumption for addition of same signs
-        
-        steps.push(`Step 4: Added Mantissas.`);
 
-        // Normalize if overflowed (result is 54 bits instead of 53)
-        if ((resultMantissa & (1n << 53n)) !== 0n) {
-            // Shift right, recalculate GRS
-            S = S | R;
-            R = G;
-            G = resultMantissa & 1n;
-            resultMantissa = resultMantissa >> 1n;
-            resultExp += 1n;
-            steps.push(`Step 5: Normalization -> Overflow detected. Shifted right. New G=${G}, R=${R}, S=${S}`);
+        if (opA.sign === opB.sign) {
+            // Standard Addition
+            steps.push(`Step 3: Same signs detected. Adding mantissas.`);
+            resultMantissa = larger.mantissa + alignedMantissa;
+            
+            // Normalize overflow
+            if ((resultMantissa & (1n << 53n)) !== 0n) {
+                S = S | R; R = G; G = resultMantissa & 1n;
+                resultMantissa = resultMantissa >> 1n;
+                resultExp += 1n;
+            }
         } else {
-            steps.push(`Step 5: Normalization -> Already normalized.`);
+            // Mixed Sign Subtraction
+            steps.push(`Step 3: Differing signs detected. Subtracting smaller mantissa from larger.`);
+            let borrow = 0n, gSub = 0n, rSub = 0n, sSub = 0n;
+            
+            // Borrow logic through GRS bits
+            if (S > 0n) { sSub = 1n; borrow = 1n; }
+            if (R > 0n || borrow > 0n) { 
+                rSub = (0n - R - borrow) & 1n; 
+                borrow = (R > 0n || borrow > 0n) ? 1n : 0n; 
+            }
+            if (G > 0n || borrow > 0n) {
+                 gSub = (0n - G - borrow) & 1n;
+                 borrow = (G > 0n || borrow > 0n) ? 1n : 0n;
+            }
+
+            resultMantissa = larger.mantissa - alignedMantissa - borrow;
+            G = gSub; R = rSub; S = sSub;
+
+            // Total cancellation mapping to +0
+            if (resultMantissa === 0n && G === 0n && R === 0n && S === 0n) {
+                return { operation: "Addition (Subtraction)", steps: ["Exact cancellation to 0"], final: this.pack(0n, 0n, 0n) };
+            }
+
+            // Normalize Subtraction Result (Shift left to restore hidden bit)
+            while ((resultMantissa & this.HIDDEN_BIT) === 0n && resultExp > 0n) {
+                resultMantissa = (resultMantissa << 1n) | G;
+                G = R; R = S; S = 0n; // Cycle bits up
+                resultExp -= 1n;
+            }
         }
 
         // Round-to-nearest ties-to-even
         if (G === 1n && (R === 1n || S === 1n || (resultMantissa & 1n) === 1n)) {
             resultMantissa += 1n;
-            steps.push(`Step 6: Rounding -> Rounding up applied.`);
              if ((resultMantissa & (1n << 53n)) !== 0n) {
                 resultMantissa = resultMantissa >> 1n;
                 resultExp += 1n;
              }
-        } else {
-            steps.push(`Step 6: Rounding -> Truncated (No rounding up needed).`);
+        }
+
+        if (resultExp >= 2047n) {
+            return { operation: "Addition", steps: ["Exponent Overflow -> Infinity"], final: this.getSpecialCasePack("Infinity", resultSign) };
+        }
+        if (resultExp <= 0n && resultMantissa !== 0n) {
+            resultExp = 0n; // Set Biased Exponent for Subnormal
         }
 
         const finalFormat = this.pack(resultSign, resultExp, resultMantissa);
         return { operation: "Addition", steps, final: finalFormat };
     }
 }
-
-// === EXAMPLE USAGE ===
-// Convert Decimal to Hex first using an external library or standard JS Buffer, 
-// then pass the Hex strings into this module.
-
-// 1.5 (Hex: 3FF8000000000000) * 2.0 (Hex: 4000000000000000)
-const mulResult = IEEE754Arithmetic.multiply("3FF8000000000000", "4000000000000000");
-console.log(mulResult);
