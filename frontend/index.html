@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Machine 3 — IEEE 754 Double Precision</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero-block">
+
+  <nav>
+    <div class="brand">
+      <div class="logo-dot"><i></i><i></i></div>
+      <div class="brand-name">Machine 3 <span>IEEE 754 · double precision</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#convert">Convert</a>
+      <a href="#round">Rounding</a>
+      <a href="#arith">Arithmetic</a>
+    </div>
+    <div class="team-menu">
+      <button class="nav-cta" id="teamBtn" aria-expanded="false">Team</button>
+      <div class="team-dropdown" id="teamDropdown">
+        <div class="team-dropdown-title">Section S04</div>
+        <ul>
+          <li>Austria, Ma. Alexandria</li>
+          <li>Campos, Don Oswin</li>
+          <li>Encallado, Edlynn Rei</li>
+          <li>Gildore, Andrei Miguel</li>
+          <li>Patricio, Anne Beatriz</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="dot"></span> Binary 64-bit Floating-Point Machine</div>
+      <h1>Turn any decimal into its <span class="accent">64-bit form.</span></h1>
+      <p class="sub">Convert decimal numbers to IEEE 754 double precision format. Includes rounding methods and step-by-step addition and multiplication.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" id="scrollDownBtn">Start Converting</button>
+        <button class="btn-ghost" id="scrollArithBtn">See Arithmetic →</button>
+      </div>
+    </div>
+
+    <div class="mock-stage">
+      <div class="float-card fc-1">
+        <div class="k">HEX</div>
+        <div class="v" id="fcHex">400921FB…</div>
+      </div>
+      <div class="float-card fc-2">
+        <div class="k">EXPONENT (biased)</div>
+        <div class="v" id="fcExp">1024</div>
+      </div>
+
+      <div class="phone-card">
+        <div class="phone-top">
+          <div class="title">Convert</div>
+          <div class="avatar"></div>
+        </div>
+
+        <div class="field-row">
+          <div class="label">
+            <span class="tagcolor"><i style="background:var(--sign)"></i>SIGN</span>
+            <span>1 bit</span>
+          </div>
+          <div class="value"><span id="valSign">0</span> <span class="sel" id="valName">π (pi)</span></div>
+        </div>
+
+        <div class="swap-btn">⟳</div>
+
+        <div class="field-row">
+          <div class="label">
+            <span class="tagcolor"><i style="background:var(--exp)"></i>EXPONENT</span>
+            <span>11 bits</span>
+          </div>
+          <div class="value"><span id="valExp">10000000000</span> <span class="sel">biased</span></div>
+        </div>
+
+        <div class="field-row">
+          <div class="label">
+            <span class="tagcolor"><i style="background:var(--man)"></i>MANTISSA</span>
+            <span>52 bits</span>
+          </div>
+          <div class="value mono-trunc"><span id="valMan">10010010000111111011…</span></div>
+        </div>
+
+        <div class="chart-box">
+          <div class="label">precision curve (mantissa weight)</div>
+          <svg viewBox="0 0 300 70" preserveAspectRatio="none">
+            <polyline points="0,50 30,42 60,48 90,20 120,35 150,15 180,30 210,10 240,25 270,8 300,18"
+              fill="none" stroke="#6C5CE7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="270" cy="8" r="4" fill="#6C5CE7"/>
+          </svg>
+          <div class="bit-strip mono" id="bitStrip"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hero-spacer"></div>
+
+<!-- WHITE PANEL -->
+<main class="panel">
+
+  <section class="section-head">
+    <h2>Available Tools</h2>
+    <p>Everything you need for IEEE 754 double-precision numbers.</p>
+  </section>
+
+  <section class="cards">
+    <div class="card c1" id="convert" tabindex="0">
+      <div class="icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <rect x="1" y="6" width="3" height="14" rx="1.2" fill="currentColor" opacity="0.9"/>
+          <rect x="6" y="10" width="9" height="6" rx="1.2" fill="currentColor" opacity="0.55"/>
+          <rect x="17" y="4" width="8" height="18" rx="1.2" fill="currentColor" opacity="0.3"/>
+          <path d="M13 1.5V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10.3 4.2 13 6.8 15.7 4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h3>Decimal to IEEE 754</h3>
+      <p>Convert a decimal number to its IEEE 754 double-precision binary representation, shown step by step.</p>
+      <span class="go">Open converter</span>
+    </div>
+    <div class="card c2" id="round" tabindex="0">
+      <div class="icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M2 21V15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.35"/>
+          <path d="M8.5 21V9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+          <path d="M15 21V13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>
+          <path d="M21.5 21V5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M1 8.5H23" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2.4 2.4" opacity="0.45"/>
+        </svg>
+      </div>
+      <h3>Rounding Methods</h3>
+      <p>Round a number using chopping, round up, round down, or round-to-nearest ties-to-even.</p>
+      <span class="go">Open rounding</span>
+    </div>
+    <div class="card c3" id="arith" tabindex="0">
+      <div class="icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <rect x="1" y="3" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
+          <rect x="1" y="16" width="24" height="7" rx="2" fill="currentColor" opacity="0.22"/>
+          <circle cx="6.5" cy="6.5" r="1.4" fill="currentColor"/>
+          <circle cx="11.5" cy="6.5" r="1.4" fill="currentColor" opacity="0.5"/>
+          <circle cx="6.5" cy="19.5" r="1.4" fill="currentColor" opacity="0.5"/>
+          <circle cx="11.5" cy="19.5" r="1.4" fill="currentColor"/>
+          <path d="M20 4.5V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M17.5 6.75H22.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3>Add & Multiply</h3>
+      <p>Add or multiply two IEEE 754 numbers with step-by-step Guard, Round, and Sticky bit calculation.</p>
+      <span class="go">Open arithmetic</span>
+    </div>
+  </section>
+
+  <footer>CSARCH2 · 3rd Term AY 2025–2026 · Section S04 · Machine 3</footer>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
