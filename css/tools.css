@@ -1,4 +1,4 @@
-/* Shared chrome for tool pages (converter, rounding, arithmetic). */
+/* Shared chrome for tool pages. */
 
 .tool-main{
   max-width:1180px;
@@ -6,7 +6,7 @@
   padding:48px clamp(20px, 4vw, 40px) 100px;
 }
 
-/* Header: no icon badge, no step numbering — each tool is independent */
+/* Header */
 .tool-header{
   margin-bottom:32px;
   max-width:720px;
@@ -25,9 +25,7 @@
   line-height:1.6;
 }
 
-/* Two-column layout: inputs on the left (sticky), results on the right.
-   Gives the tool room to breathe and keeps controls visible while
-   longer output (e.g. arithmetic steps) scrolls. */
+/* Two-column layout */
 .tool-layout{
   display:grid;
   grid-template-columns:minmax(300px, 380px) 1fr;
@@ -75,7 +73,7 @@
   .tool-layout .tool-output-card .tool-grid{ grid-template-columns:1fr; }
 }
 
-/* Input fields: a small purple dot on the label marks "this needs your input" */
+/* Input fields */
 .input-with-select{
   position:relative;
 }
@@ -147,7 +145,7 @@
   cursor:default;
   background:#F7F6FD;
 }
-/* A readonly field is an output, not an input — mark it teal, not purple */
+/* Readonly fields */
 .field.is-output label::before{ background:var(--man); }
 .field.is-output input{ font-weight:600; }
 
@@ -163,7 +161,7 @@
   background-repeat:no-repeat;
 }
 
-/* Results: a teal dot marks "this is computed output" */
+/* Results */
 .result-list{
   display:flex;
   flex-direction:column;

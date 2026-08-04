@@ -1,7 +1,5 @@
 /**
- * Shared site chrome: builds the top nav from a single source of truth so
- * every page — including the homepage — renders the exact same tab bar,
- * with the current page highlighted.
+ * Shared site chrome: builds the top nav from a single source of truth
  */
 const NAV_LINKS = [
   { key: "home", href: "index.html", label: "Home" },

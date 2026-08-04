@@ -21,18 +21,9 @@ class RoundingMethod {
 
         const pointIndex = input.indexOf(".");
         const hasPoint = pointIndex !== -1;
-
-        // A decimal point is optional — a plain integer like "2323224" is
-        // valid input, it just has no fraction part.
         const integerPart = hasPoint ? input.slice(0, pointIndex) : input;
         const fractionPart = hasPoint ? input.slice(pointIndex + 1) : "";
-
         const binaryInput = format === "binary";
-
-        // The format is explicit (set via the dropdown) rather than guessed —
-        // a decimal like "10.1" is no longer misread as binary just because it
-        // happens to be made up of 0s and 1s. Still validate it matches the
-        // chosen format so obviously wrong input (e.g. "12" as Binary) is caught.
         const digitsOk = binaryInput
             ? /^[01]*$/.test(integerPart) && /^[01]*$/.test(fractionPart)
             : /^[0-9]*$/.test(integerPart) && /^[0-9]*$/.test(fractionPart);
@@ -48,24 +39,11 @@ class RoundingMethod {
         };
     }
 
-    // Builds "intPart.fracPart", only inserting the "." when there is
-    // actually a fraction part left after cutting. This is what lets a
-    // cut that lands entirely inside the integer part (e.g. 1023.3 -> 102)
-    // come out as a plain integer with no trailing dot.
     static buildValue(intPart, fracPart) {
         return fracPart.length > 0 ? intPart.concat(".", fracPart) : intPart;
     }
 
-    // The core of every method below: targetDigits counts PURE digits —
-    // the decimal point itself is never one of them. We flatten
-    // "intPart"+"fracPart" into one digit string, take the first
-    // targetDigits of it, and only re-insert a "." if the cut point falls
-    // past the end of the integer part. Also returns whatever digits were
-    // discarded, needed for the rounding decision.
-    //
-    // Examples (targetDigits=3): "1023.3" -> kept "102", frac "" (cut lands
-    // inside the integer, so no dot at all). "1.55" (targetDigits=2) ->
-    // kept int "1", frac "5" (cut spills one digit into the fraction).
+    // targetDigits counts pure digits and the decimal point itself is never one of them
     static splitAtTarget(integerPart, fractionPart, targetDigits) {
         const digits = integerPart + fractionPart;
         const intLen = integerPart.length;
@@ -88,10 +66,6 @@ class RoundingMethod {
         return sign + RoundingMethod.buildValue(intPart, fracPart);
     }
 
-    // Increments a truncated "intPart.fracPart" value by one unit in the last
-    // kept place, propagating carry through the fraction into the integer
-    // part (e.g. "1.99" -> "2.00", "0.9" -> "1.0", "999" -> "1000"). Works
-    // for decimal or binary strings depending on `base`.
     static incrementAtLastPlace(intPart, fracPart, base = 10) {
         const digits = (intPart + fracPart).split("").map(Number);
         let carry = 1;
@@ -115,11 +89,11 @@ class RoundingMethod {
 
     static rndUp(integerPart, fractionPart, targetDigits, sign, binaryInput) {
         // towards +positive infinity
-        const { intPart, fracPart } = RoundingMethod.splitAtTarget(integerPart, fractionPart, targetDigits);
+        const { intPart, fracPart, discarded } = RoundingMethod.splitAtTarget(integerPart, fractionPart, targetDigits);
 
         let value;
-        if (sign == "-"){
-            // Magnitude is truncated; "up" toward +infinity means toward 0.
+        if (sign == "-" || discarded.length === 0){
+            // negative magnitude truncated toward 0, OR nothing was cut -> exact value
             value = RoundingMethod.buildValue(intPart, fracPart)
         }else{
             const base = binaryInput ? 2 : 10;
@@ -132,11 +106,11 @@ class RoundingMethod {
 
     static rndDown(integerPart, fractionPart, targetDigits, sign, binaryInput){
         // towards -negative infinity
-        const { intPart, fracPart } = RoundingMethod.splitAtTarget(integerPart, fractionPart, targetDigits);
+        const { intPart, fracPart, discarded } = RoundingMethod.splitAtTarget(integerPart, fractionPart, targetDigits);
 
         let value;
-        if (sign == "-"){
-            // Magnitude grows; "down" toward -infinity means away from 0.
+        if (sign == "-" && discarded.length > 0){
+            // magnitude grows only if something was actually truncated
             const base = binaryInput ? 2 : 10;
             const bumped = RoundingMethod.incrementAtLastPlace(intPart, fracPart, base);
             value = RoundingMethod.buildValue(bumped.intPart, bumped.fracPart)
@@ -234,61 +208,7 @@ class RoundingMethod {
 
 }
 
-
-
-/*
-Sample Output:
-Target: 2 digits
-Number      |   Truncate    |   RndUp   |   RndDown |   RndToNearest,TiesToEven
- 1.55            1.5            1.6         1.5                1.6
--1.55           -1.5           -1.5        -1.6               -1.6
-
-Target: 7 digits
-Number          |   Truncate        |   RndUp       |   RndDown     |   RndToNearest,TiesToEven
--0.100101100        -0.100101         -0.100101        -0.100110            -0.100110
- 0.100101110         0.100101          0.100110         0.100101             0.100110
-
-Target: 3 digits, cut lands before the decimal point
-Number      |   Truncate
-1023.3           102
-
-Target: 4 digits, no decimal point at all
-Number      |   Truncate
-2323224          2323
-*/
-
-console.log("Number: 1.55   |   Target: 2 digits")
-console.log(
-    RoundingMethod.roundAll("1.55", 2, "decimal")
-);
-
-console.log("\nNumber: -1.55   |   Target: 2 digits")
-console.log(
-    RoundingMethod.roundAll("-1.55", 2, "decimal")
-);
-
-console.log("\nNumber: -0.100101100   |   Target: 7 digits")
-console.log(
-    RoundingMethod.roundAll("-0.100101100", 7, "binary")
-);
-
-console.log("\nNumber: 0.100101110   |   Target: 7 digits")
-console.log(
-    RoundingMethod.roundAll("0.100101110", 7, "binary")
-);
-
-console.log("\nNumber: 1023.3   |   Target: 3 digits")
-console.log(
-    RoundingMethod.roundAll("1023.3", 3, "decimal")
-);
-
-console.log("\nNumber: 2323224   |   Target: 4 digits (no decimal point)")
-console.log(
-    RoundingMethod.roundAll("2323224", 4, "decimal")
-);
-
-
-//action listener for rounding.html
+// action listener for rounding.html
 document.addEventListener("DOMContentLoaded", () => {
     const numberInput = document.getElementById('numberInput');
     const numberFormat = document.getElementById('numberFormat');
@@ -334,14 +254,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            //Calling the rounding methods and updating the output fields base on the result
+            // Calling the rounding methods and updating the output fields based on the result
             const result = RoundingMethod.roundAll(numValue, targetDigits, format);
 
             if (!result || result === "Invalid Input") {
                 clearOutputs();
                 setHint(format === "binary"
-                    ? "Binary numbers can only use 0 and 1 digits — switch the format to Decimal if that's what you meant."
-                    : "Decimal numbers can only use digits 0–9 — switch the format to Binary if that's what you meant.");
+                    ? "Binary numbers can only use 0 and 1 digits. Switch the format to Decimal if that's what you meant."
+                    : "Decimal numbers can only use digits 0-9. Switch the format to Binary if that's what you meant.");
                 return;
             }
 

@@ -1,4 +1,4 @@
-// Demo values cycling through the mock "Convert" card
+// Demo values cycling through the mock card
 const demos = [
   {
     name: "π (pi)",
@@ -60,8 +60,6 @@ setInterval(playDemo, 3800);
 // Card interactions
 document.querySelectorAll(".card").forEach((c) => {
   c.addEventListener("click", () => {
-    // TODO: replace with real navigation once routes exist, e.g.:
-    // window.location.href = `/${c.id}`;
     console.log("Navigate to:", c.id);
   });
   c.addEventListener("keypress", (e) => {
@@ -69,13 +67,10 @@ document.querySelectorAll(".card").forEach((c) => {
   });
 });
 
-// Hero CTA: "Start Converting" now links straight to the converter page (see index.html).
-// "See Tools" still scrolls down into the white panel.
+// Hero CTA
 document.getElementById("scrollArithBtn")?.addEventListener("click", () => {
   document.querySelector(".panel").scrollIntoView({ behavior: "smooth" });
   setTimeout(() => {
     document.getElementById("arith")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, 500);
 });
-
-// Team dropdown is now handled by the shared nav.js (loaded before this file).

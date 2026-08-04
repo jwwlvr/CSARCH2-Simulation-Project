@@ -18,10 +18,6 @@ class DecToDoubleConverter {
         }
 
         // check for special cases (string)
-        // NOTE: the leading sign was already stripped into `sign` above, so
-        // these checks must use `sign` rather than re-matching a "-" prefix
-        // (which can never be there anymore — that was the bug: "-0" and
-        // "-Infinity" were silently coming out as +0 / +Infinity).
         let lowerString = string.toLowerCase();
         // zero (sign-aware)
         if (lowerString === "0") {
@@ -63,7 +59,7 @@ class DecToDoubleConverter {
         if (fractionPart !== "") {
             let number = BigInt(fractionPart); // use BigInt for precision
             let denominator = BigInt(10) ** BigInt(fractionPart.length); // denominator based on number of digits
-            
+
             // 1100 since double precision
             for (let i = 0; i < 1100; i++) {
                 number *= BigInt(2);
@@ -119,7 +115,7 @@ class DecToDoubleConverter {
             isDenormalized = true;
         }
         let bitOffset = isDenormalized ? (exponent + 1022) : 0; // if denormalized, shift bits to right
-        
+
         // helper to get bits
         let getBits = (index) => {
             let position = bitOffset + index;
@@ -127,7 +123,7 @@ class DecToDoubleConverter {
             if (position < 0 || position >= wholeBits.length) {
                 return "0";
             }
-            return wholeBits[position]; 
+            return wholeBits[position];
         };
 
         // get mantissa bits (52 bits)
@@ -192,51 +188,39 @@ class DecToDoubleConverter {
             return this.pack(sign, "11111111111", "0".repeat(52), text);
         }
 
-        let expBits = biasedExp.toString(2).padStart(11, "0");// ensure 11 bits
+        let expBits = biasedExp.toString(2).padStart(11, "0"); // ensure 11 bits
         let finalMantissa = mantissaInt.toString(2).padStart(52, "0"); // ensure 52 bits
 
         return this.pack(sign, expBits, finalMantissa, text);
-
     }
 
-    // helper to pack ino obj
+    // helper to pack into obj
     static pack(sign, expBits, mantissaBits, text = []) {
-            let bits64 = sign + expBits + mantissaBits;
-            let binaryString = `${sign} ${expBits} ${mantissaBits}`;
+        let bits64 = sign + expBits + mantissaBits;
+        let binaryString = `${sign} ${expBits} ${mantissaBits}`;
 
-            let hexString = "";
-            for (let i = 0; i < 64; i += 4) {
-                // take 4 bits at a time
-                let nibble = bits64.slice(i, i + 4);
-                hexString += parseInt(nibble, 2).toString(16).toUpperCase();
-            }
-
-            return {
-                sign: sign === "1" ? "-" : "+",
-                text: text,
-                binary: binaryString,
-                hex: hexString
-            }
+        let hexString = "";
+        for (let i = 0; i < 64; i += 4) {
+            // take 4 bits at a time
+            let nibble = bits64.slice(i, i + 4);
+            hexString += parseInt(nibble, 2).toString(16).toUpperCase();
         }
+
+        return {
+            sign: sign === "1" ? "-" : "+",
+            text: text,
+            binary: binaryString,
+            hex: hexString
+        };
+    }
 }
 
-// Test Cases
-console.log("3.25");
-console.log(DecToDoubleConverter.convert("3.25"));
-
-console.log("-0.1");
-console.log(DecToDoubleConverter.convert("-0.1"));
-
-console.log("snan");
-console.log(DecToDoubleConverter.convert("snan"));
-
-
-//Event listener for dectodouble.html
+// Event listener for dectodouble.html
 document.addEventListener("DOMContentLoaded", () => {
     const decimalInput = document.getElementById('decimalInput');
     const floatOutput = document.getElementById('floatOutput');
     const fullBinaryOutput = document.getElementById('fullBinaryOutput');
-    
+
     // 64-Bit Layout outputs
     const signBitOutput = document.getElementById('signBitOutput');
     const exponentBitsOutput = document.getElementById('exponentBitsOutput');
@@ -247,19 +231,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const exponentAnalysisOutput = document.getElementById('exponentAnalysisOutput');
     const mantissaAnalysisOutput = document.getElementById('mantissaAnalysisOutput');
 
+    function clearOutputs() {
+        floatOutput.textContent = "";
+        fullBinaryOutput.textContent = "";
+        signBitOutput.textContent = "";
+        exponentBitsOutput.textContent = "";
+        mantissaBitsOutput.textContent = "";
+        signAnalysisOutput.textContent = "";
+        exponentAnalysisOutput.textContent = "";
+        mantissaAnalysisOutput.textContent = "";
+    }
+
     function handleConversion() {
         const value = decimalInput.value;
 
-        // Clear output fields if input is empty
         if (!value.trim()) {
-            floatOutput.textContent = "";
-            fullBinaryOutput.textContent = "";
-            signBitOutput.textContent = "";
-            exponentBitsOutput.textContent = "";
-            mantissaBitsOutput.textContent = "";
-            signAnalysisOutput.textContent = "";
-            exponentAnalysisOutput.textContent = "";
-            mantissaAnalysisOutput.textContent = "";
+            clearOutputs();
             return;
         }
 
@@ -271,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fullBinaryOutput.textContent = result.binary || "";
 
                 const parts = result.binary.split(" ");
-                
+
                 // Bit layout outputs
                 signBitOutput.textContent = parts[0] || "";
                 exponentBitsOutput.textContent = parts[1] || "";
@@ -294,27 +281,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 let mantText = result.text ? result.text.find(t => t.startsWith("Mantissa:")) : null;
                 let mantissaBits = mantText ? mantText.replace("Mantissa: ", "") : (parts[2] || "");
 
-                //turn the matissa bits into its decimal equivalent
+                // turn the mantissa bits into its decimal equivalent
                 let decimalValue = 0;
-                for(let i = 0; i < mantissaBits.length; i++) {
-                    if(mantissaBits[i] === "1"){
+                for (let i = 0; i < mantissaBits.length; i++) {
+                    if (mantissaBits[i] === "1") {
                         decimalValue += Math.pow(2, -(i + 1));
                     }
                 }
 
-
                 mantissaAnalysisOutput.textContent = decimalValue.toFixed(10);
             }
         } catch (error) {
-            // Input isn't a complete/valid number yet (e.g. mid-typing) — clear outputs quietly
-            floatOutput.textContent = "";
-            fullBinaryOutput.textContent = "";
-            signBitOutput.textContent = "";
-            exponentBitsOutput.textContent = "";
-            mantissaBitsOutput.textContent = "";
-            signAnalysisOutput.textContent = "";
-            exponentAnalysisOutput.textContent = "";
-            mantissaAnalysisOutput.textContent = "";
+            // Input isn't a complete/valid number yet (e.g. mid-typing)
+            clearOutputs();
         }
     }
 

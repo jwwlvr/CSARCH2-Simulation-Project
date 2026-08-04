@@ -291,16 +291,7 @@ class IEEE754Arithmetic {
 }
 
 /**
- * Converts a user-typed operand into the plain 16-hex-digit form
- * IEEE754Arithmetic.unpackHex expects.
- *
- * `format` is explicit ("decimal" or "hex"), set via the dropdown next to
- * the input — it is no longer guessed from the string's shape. That guess
- * was ambiguous: e.g. "12345678901234AB" reads as hex-looking, but a purely
- * numeric string like "1234567890123456" could just as easily have been
- * meant as decimal. The dropdown removes the ambiguity entirely.
- *
- * Throws with a readable message on invalid input.
+ * Converts a user-typed operand into the plain 16-hex-digit form IEEE754Arithmetic.unpackHex expects.
  */
 function operandToHex(raw, format) {
     const value = raw.trim();
@@ -321,9 +312,6 @@ function operandToHex(raw, format) {
     try {
         result = DecToDoubleConverter.convert(value);
     } catch (err) {
-        // DecToDoubleConverter uses BigInt() internally, which throws its
-        // own low-level error (e.g. "Cannot convert 12abc to a BigInt") on
-        // malformed input — surface a message about the operand instead.
         throw new Error(`"${value}" is not a valid decimal number`);
     }
     if (!result || !result.hex || result.hex.length !== 16) {
@@ -347,10 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!operandA || !operandB) return; // not on this page
 
-    // Renders each step as a compact table row: "Label" | "detail". Steps
-    // are formatted "Label -> detail"; rows without a "->" (early-exit /
-    // special-case messages) span the full row instead of splitting into
-    // two columns.
+    // Renders each step as a table row
     function renderSteps(lines) {
         stepsList.innerHTML = "";
         lines.forEach((line) => {
@@ -390,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function compute() {
         clearOutputs();
 
-        // Nothing typed yet on one or both sides — stay quiet instead of erroring
+        // Nothing typed yet on one or both sides
         if (!operandA.value.trim() || !operandB.value.trim()) {
             return;
         }
