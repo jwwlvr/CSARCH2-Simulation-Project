@@ -24,7 +24,7 @@
 
 ## Tech Stack
 
-- **HTML, CSS, JavaScript** — no frameworks or build tools, runs entirely in the browser
+- **HTML, CSS, JavaScript**: no frameworks or build tools, runs entirely in the browser
 
 **Core Modules**
 
