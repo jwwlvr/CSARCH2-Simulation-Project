@@ -33,8 +33,6 @@
 | `DecToDoubleConverter.js` | Decimal → IEEE 754 double-precision conversion |
 | `RoundingMethods.js` | Chopping, round up, round down, round-to-nearest ties-to-even |
 | `IEEE754Arithmetic.js` | Addition and multiplication using Guard/Round/Sticky bits |
-| `nav.js` | Shared page navigation |
-| `script.js` | General page scripting |
 
 **Deployment**
 - TBD
