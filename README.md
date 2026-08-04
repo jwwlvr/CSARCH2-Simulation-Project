@@ -130,13 +130,13 @@
 </p>
 
 <p align="center">
-  <img src="screenshots/art1.5.jpg" width="49%" />
   <img src="screenshots/art1.6.jpg" width="49%" />
+  <img src="screenshots/art1.8.jpg" width="49%" />
 </p>
 
 <p align="center">
+  <img src="screenshots/art1.5.jpg" width="49%" />
   <img src="screenshots/art1.7.jpg" width="49%" />
-  <img src="screenshots/art1.8.jpg" width="49%" />
 </p>
 
 <p align="center">
