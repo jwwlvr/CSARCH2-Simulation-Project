@@ -155,7 +155,7 @@
 ## Video Walkthrough
 
 **YouTube Link:**
-> TBD
+> <https://youtu.be/V41XheyvpqE>
 
 ---
 
